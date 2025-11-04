@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function LoginForm() {
+export function LoginForm({ headline }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -11,7 +11,7 @@ export function LoginForm() {
   return (
     <>
       <div className="flex flex-col items-center justify-center">
-        <div className="text-white text-2xl font-bold mb-4">SIGN IN</div>
+        <div className="text-white text-2xl font-bold mb-4">{headline}</div>
       </div>
       <div className="w-120 h-70 rounded-4xl shadow-lg flex flex-col gap-3 items-center justify-center bg-white/5">
         <input
