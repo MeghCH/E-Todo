@@ -1,0 +1,12 @@
+#Pour démmarrer un serveur sql
+sudo service mysql start
+
+#verif si il tourne
+sudo systemctl status mysql
+
+#pour redémarer ou stop
+sudo systemctl stop mysql
+sudo systemctl restart mysql
+
+#importer une base de données ou exécuter des instructions SQL stockées dans un fichier.
+cat e-todo.sql | mysql -u root -p
