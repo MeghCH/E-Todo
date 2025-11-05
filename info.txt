@@ -8,5 +8,10 @@ sudo systemctl status mysql
 sudo systemctl stop mysql
 sudo systemctl restart mysql
 
-#importer une base de données ou exécuter des instructions SQL stockées dans un fichier.
-cat e-todo.sql | mysql -u root -p
+#importer une base de données ou exécuter des instructions SQL stockées dans un fichier.(a faire dans le dossier database)
+cat e-todo.sql | mysql -u root -p  Attention! elle marche pas
+faire sa sudo mysql < e-todo.sql
+
+
+#pour avoir l'interface sql
+sudo mysql

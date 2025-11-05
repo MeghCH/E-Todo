@@ -11,12 +11,11 @@ CREATE TABLE IF NOT EXISTS `user` (
 );
 
 CREATE TABLE IF NOT EXISTS `todo` (
-`id` INT AUTO_INCREMENT PRIMARY KEY,
+`user_id` INT NOT NULL PRIMARY KEY,
 `title` VARCHAR(255) NOT NULL,
 `description` TEXT NOT NULL,
 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 `due_time` DATETIME NOT NULL,
 `status` ENUM('not started', 'todo', 'in progress', 'done') DEFAULT 'not started',
-`user_id` INT NOT NULL,
 FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 );
