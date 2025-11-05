@@ -1,36 +1,18 @@
-import TodoList from "../components/TodoList";
-import TimeTracker from "../components/Timetracker";
+import TimeTracker from "../components/TimeTracker";
 import TimeHistory from "../components/TimeHistory";
-import RegisterButton from "../components/RegisterButton";
-import WeatherWidget from "../components/WeatherWidget";
-import ThemeToggle from "../components/ThemeToggle";
+import TodoList from "../components/TodoList";
 
 export function HomePage() {
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col items-center justify-center">
-      <div className="fixed top-4 right-4">
-        <ThemeToggle />
+    <div className="size-full flex p-2 gap-2">
+      <div className="h-full flex flex-col items-start justify-start gap-4 rounded-2xl bg-neutral-200 dark:bg-neutral-900 w-96 p-4 overflow-auto">
+        <TimeTracker />
+        <div className="min-h-px bg-neutral-900 dark:bg-neutral-100 opacity-5 w-full" />
+        <TimeHistory />
       </div>
 
-      <h1 className="text-6xl mb-6">Bonjour</h1>
-
-      <div className="rounded-xl p-4 bg-[var(--card)] shadow mb-6">
-        <p className="text-[var(--muted)]">Hello thème 👋</p>
-      </div>
-
-      <div className="flex w-full max-w-5xl gap-6">
-        <div className="flex flex-col items-start gap-4">
-          <div className="scale-75">
-            <TimeTracker />
-          </div>
-          <TimeHistory />
-          <RegisterButton />
-          <WeatherWidget />
-        </div>
-
-        <div className="flex-1 flex justify-end items-center pr-4">
-          <TodoList />
-        </div>
+      <div className="h-full flex-1 flex flex-col justify-start items-center bg-neutral-200 dark:bg-neutral-900 rounded-2xl p-4 overflow-auto">
+        <TodoList />
       </div>
     </div>
   );

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { TextInput } from "./TextInput";
+import { Button } from "./Button";
 
 function formatDuration(ms) {
   const totalSeconds = Math.floor(ms / 1000);
@@ -76,49 +78,40 @@ function TimeTracker() {
   };
 
   return (
-    <div className="flex items-start justify-start">
-      <div className="shadow-md rounded-2xl p-6 text-center border border-orange-200 bg-white/80 backdrop-blur">
-        <h1 className="text-2xl font-bold text-orange-500 mb-4 drop-shadow-sm">
-          Pointeuse
-        </h1>
+    <div className="flex flex-col items-start justify-start w-full gap-2">
+      <h2 className="text-base text-neutral-500">Pointeuse</h2>
 
-        <p className="text-5xl font-mono text-gray-800 mb-6">
-          {formatDuration(elapsedTime)}
-        </p>
+      <div className="w-full flex gap-2 items-center">
+        <p className="text-lg font-mono p-3">{formatDuration(elapsedTime)}</p>
 
-        <div className="mb-6">
-          <input
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Note / Tâche / Projet (optionnel)"
-            className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
-          />
-        </div>
+        <TextInput
+          value={note}
+          onChange={setNote}
+          placeholder="Note / Tâche / Projet"
+          className="flex-1"
+        />
+      </div>
 
-        <div className="flex justify-center gap-3">
-          {!isRunning ? (
-            <button
-              onClick={handleStart}
-              className="px-5 py-2 bg-green-500 text-white font-semibold rounded-md shadow hover:bg-green-600 transition"
-            >
-              Commencer
-            </button>
-          ) : (
-            <button
-              onClick={handleStop}
-              className="px-5 py-2 bg-red-500 text-white font-semibold rounded-md shadow hover:bg-red-600 transition"
-            >
-              Arrêter & Enregistrer
-            </button>
-          )}
-
-          <button
-            onClick={handleReset}
-            className="px-5 py-2 border border-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-100 transition"
+      <div className="flex justify-center gap-2 w-full">
+        {!isRunning ? (
+          <Button onClick={handleStart} className="flex-1">
+            Commencer
+          </Button>
+        ) : (
+          <Button
+            onClick={handleStop}
+            className="flex-1 bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
           >
-            Réinitialiser
-          </button>
-        </div>
+            Enregistrer
+          </Button>
+        )}
+
+        <Button
+          onClick={handleReset}
+          className="flex-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-600 dark:text-neutral-300"
+        >
+          Réinitialiser
+        </Button>
       </div>
     </div>
   );

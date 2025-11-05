@@ -1,75 +1,170 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import TodoItem from "./TodoItem";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-function TodoItem({ task, deleteTask, toggleCompleted }) {
-  return (
-    <div className="flex items-center gap-2 mb-1.5">
-      <input
-        type="checkbox"
-        checked={task.completed}
-        onChange={() => toggleCompleted(task.id)}
-      />
-      <span className={task.completed ? "line-through" : ""}>{task.text}</span>
-      <button
-        className="font-bold text-white/80 w-20 h-7 bg-orange-400 rounded-sm"
-        onClick={() => deleteTask(task.id)}
-      >
-        Supprimer
-      </button>
-    </div>
-  );
-}
+const PRIORITIES = [
+  { value: "high", label: "Haute" },
+  { value: "medium", label: "Moyenne" },
+  { value: "low", label: "Faible" },
+];
 
 function TodoList() {
   const [tasks, setTasks] = useState([]);
-
   const [text, setText] = useState("");
+  const [due, setDue] = useState("");
+  const [priority, setPriority] = useState("medium");
+  const [sortBy, setSortBy] = useState("manual");
 
-  function addTask(value) {
-    const trimmed = value.trim();
+  function addTask() {
+    const trimmed = text.trim();
     if (!trimmed) return;
-    const newTask = { id: Date.now(), text: trimmed, completed: false };
+
+    const newTask = {
+      id: String(Date.now()),
+      text: trimmed,
+      completed: false,
+      due: due || null,
+      priority,
+      createdAt: Date.now(),
+    };
 
     setTasks((prev) => [...prev, newTask]);
     setText("");
+    setDue("");
+    setPriority("medium");
   }
 
   function deleteTask(id) {
-    setTasks((prev) => prev.filter((task) => task.id !== id));
+    setTasks((prev) => prev.filter((t) => t.id !== id));
   }
 
   function toggleCompleted(id) {
     setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
+      prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
     );
   }
 
-  return (
-    <div className="todo-list">
-      <div className="w-120 h-70 rounded-4xl shadow-lg flex flex-col gap-3 items-center justify-center bg-white">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">
-          {" "}
-          ToDo List
-        </h1>
-        {tasks.map((task) => (
-          <TodoItem
-            key={task.id}
-            task={task}
-            deleteTask={deleteTask}
-            toggleCompleted={toggleCompleted}
-          />
-        ))}
+  const displayTasks = useMemo(() => {
+    if (sortBy === "manual") return tasks;
 
-        <div className="mt-3">
+    const copy = [...tasks];
+    if (sortBy === "date") {
+      copy.sort((a, b) => {
+        if (!a.due && !b.due) return 0;
+        if (!a.due) return 1;
+        if (!b.due) return -1;
+        return new Date(a.due) - new Date(b.due);
+      });
+    } else if (sortBy === "priority") {
+      const score = { high: 0, medium: 1, low: 2 };
+      copy.sort((a, b) => score[a.priority] - score[b.priority]);
+    }
+    return copy;
+  }, [tasks, sortBy]);
+
+  function handleOnDragEnd(result) {
+    if (!result.destination) return;
+    if (sortBy !== "manual") return;
+
+    const newTasks = Array.from(tasks);
+    const [moved] = newTasks.splice(result.source.index, 1);
+    newTasks.splice(result.destination.index, 0, moved);
+    setTasks(newTasks);
+  }
+
+  return (
+    <div className="flex flex-col items-start justify-start w-full gap-2">
+      <h2 className="text-base text-neutral-500">Todo List</h2>
+
+      <div className="flex flex-col md:flex-row gap-2 items-stretch md:items-end">
+        <div className="flex-1 flex gap-2">
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Nouvelle tâche…"
+            className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <button onClick={() => addTask(text)}>Add</button>
+          <input
+            type="date"
+            value={due}
+            onChange={(e) => setDue(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            aria-label="Date d'échéance"
+          />
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+            aria-label="Priorité"
+          >
+            {PRIORITIES.map((p) => (
+              <option key={p.value} value={p.value}>
+                {p.label}
+              </option>
+            ))}
+          </select>
         </div>
+        <button
+          onClick={addTask}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+        >
+          Ajouter
+        </button>
       </div>
+
+      <div className="flex items-center gap-3">
+        <label className="text-sm text-gray-500">Tri :</label>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="border border-gray-300 rounded-md px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <option value="manual">Manuel (Drag & Drop)</option>
+          <option value="date">Par date</option>
+          <option value="priority">Par priorité</option>
+        </select>
+      </div>
+
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <Droppable droppableId="tasks">
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="flex flex-col gap-2"
+            >
+              {displayTasks.map((task, index) => (
+                <Draggable
+                  key={task.id}
+                  draggableId={task.id}
+                  index={index}
+                  isDragDisabled={sortBy !== "manual"}
+                >
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className={`p-2 rounded-md transition ${
+                        snapshot.isDragging
+                          ? "bg-gray-100 shadow-md"
+                          : "bg-white"
+                      }`}
+                    >
+                      <TodoItem
+                        task={task}
+                        deleteTask={deleteTask}
+                        toggleCompleted={toggleCompleted}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </div>
   );
 }

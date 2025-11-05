@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Button } from "./Button";
 
 export default function RegisterButton() {
   const navigate = useNavigate();
@@ -8,11 +9,8 @@ export default function RegisterButton() {
   };
 
   return (
-    <button
-      onClick={handleClick}
-      className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition duration-200"
-    >
-      Register
-    </button>
+    <Button onClick={handleClick} className="px-3">
+      Ajouter un employer
+    </Button>
   );
 }

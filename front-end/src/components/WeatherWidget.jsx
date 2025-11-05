@@ -19,26 +19,24 @@ export default function WeatherWidget() {
   }, []);
 
   const date = new Date().toLocaleDateString("fr-FR", {
-    weekday: "long",
-    month: "long",
+    weekday: "short",
+    month: "short",
     day: "numeric",
   });
 
   const weatherIcon = "🌤️";
 
   return (
-    <div className="bg-white/20 backdrop-blur-md rounded-2xl shadow-lg px-6 py-4 text-white text-sm">
+    <div className="bg-neutral-200 dark:bg-neutral-900 rounded-md h-12 flex gap-2 px-4 text-base">
       {loading ? (
         <div>Chargement...</div>
       ) : (
         <div className="flex items-center justify-between gap-3">
-          <div>
-            <div className="text-xl font-bold">
-              {weatherIcon} {temp}°C
-            </div>
-            <div className="text-sm text-gray-100">Paris</div>
+          <div className="text-sm opacity-25">Paris</div>
+          <div className="opacity-50">
+            {weatherIcon} {temp}°C
           </div>
-          <div className="text-right capitalize">{date}</div>
+          <div className="capitalize opacity-25">{date}</div>
         </div>
       )}
     </div>

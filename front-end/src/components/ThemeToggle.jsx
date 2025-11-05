@@ -1,25 +1,33 @@
+import { RiMoonFill, RiSunFill } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
-  const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
+  const [isDark, setIsDark] = useState(false);
+
+  const handleChange = (newValue) => {
+    document.body.classList.toggle("dark", newValue);
+    localStorage.setItem("theme", newValue ? "dark" : "light");
+    setIsDark(newValue);
+  };
 
   useEffect(() => {
-    const root = document.documentElement;
-    root.classList.toggle("dark-mode", dark);
-    localStorage.setItem("theme", dark ? "dark" : "light");
-  }, [dark]);
+    const saved = localStorage.getItem("theme");
+    if (saved) {
+      const savedIsDark = saved === "dark";
+      handleChange(savedIsDark);
+    } else {
+      const prefer = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      handleChange(prefer);
+    }
+  }, []);
 
   return (
     <button
-      onClick={() => setDark((v) => !v)}
-      className="px-3 py-2 rounded-lg bg-[var(--card)] text-[var(--text)] border border-white/10 hover:opacity-90 transition"
+      onClick={() => handleChange(!isDark)}
+      className="size-12 hover:opacity-80 flex justify-center items-center rounded-lg bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white cursor-pointer"
       title="Basculer le thème"
     >
-      {dark ? "Clair" : "Sombre"}
+      {isDark ? <RiSunFill /> : <RiMoonFill />}
     </button>
   );
 }

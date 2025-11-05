@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
+import { Button } from "./Button";
+import { RiDeleteBinFill } from "@remixicon/react";
 
 function loadSessions() {
   try {
@@ -82,68 +84,91 @@ export default function TimeHistory() {
   };
 
   return (
-    <div className="w-full max-w-3xl bg-white/80 backdrop-blur rounded-2xl border border-gray-200 shadow p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-xl font-semibold text-gray-800">Historique</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={handleExport}
-            className="px-3 py-1.5 text-sm bg-gray-800 text-white rounded-md hover:bg-black transition"
-          >
-            Export CSV
-          </button>
-          <button
-            onClick={handleClear}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-100 transition"
-          >
-            Vider
-          </button>
-        </div>
-      </div>
-
-      <div className="text-sm text-gray-600 mb-4">
-        Total: <span className="font-semibold">{formatDuration(totalMs)}</span>
+    <div className="flex flex-col items-start justify-start w-full gap-2">
+      <div className="flex items-center justify-between w-full">
+        <h2 className="text-base text-neutral-500">Historique</h2>
+        <p className="text-base font-mono flex gap-2 items-center">
+          <span className="text-sm opacity-25 flex-1">Total</span>
+          {formatDuration(totalMs)}
+        </p>
       </div>
 
       {sessions.length === 0 ? (
-        <p className="text-gray-500 text-sm">
-          Aucune session enregistrée pour le moment.
-        </p>
+        <p className="text-sm">Aucune session enregistrée pour le moment.</p>
       ) : (
-        <ul className="divide-y divide-gray-200 max-h-96 overflow-auto pr-1">
-          {sessions.map((s) => (
-            <li
-              key={s.id}
-              className="py-3 flex items-start justify-between gap-3"
-            >
-              <div>
-                <div className="text-gray-900 font-medium">
-                  {formatDuration(s.durationMs)}
+        <ul className="flex flex-col gap-0.5 w-full">
+          {sessions.map((s) => {
+            const startTimeCode = new Date(s.start);
+            const endTimeCode = new Date(s.end);
+
+            const startDate = startTimeCode.toLocaleDateString("fr-FR", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            });
+            const startTime = startTimeCode.toLocaleTimeString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            const endDate = endTimeCode.toLocaleDateString("fr-FR", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            });
+            const endTime = endTimeCode.toLocaleTimeString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            return (
+              <li
+                key={s.id}
+                className="bg-neutral-300 dark:bg-neutral-800 w-full p-2 rounded-md"
+              >
+                <div className="w-full flex justify-between">
+                  <div className="text-base font-mono">
+                    {formatDuration(s.durationMs)}
+                  </div>
+                  <Button
+                    onClick={() => handleDelete(s.id)}
+                    className="size-6 p-0 bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
+                  >
+                    <RiDeleteBinFill size={14} />
+                  </Button>
                 </div>
-                <div className="text-gray-600">
-                  {new Date(s.start).toLocaleString("fr-FR")} →{" "}
-                  {new Date(s.end).toLocaleString("fr-FR")}
+                <div className="flex w-full flex-col text-sm mt-2">
+                  <p className="flex w-full items-center gap-4">
+                    <span className="opacity-50 capitalize">{startDate}</span>
+                    <span className="font-mono">{startTime}</span>
+                  </p>
+                  <p className="flex w-full items-center gap-4">
+                    <span className="opacity-50 capitalize">{endDate}</span>
+                    <span className="font-mono">{endTime}</span>
+                  </p>
                 </div>
                 {s.note && (
-                  <div className="text-gray-700 mt-1">
-                    <span className="text-xs uppercase tracking-wide text-gray-500">
-                      Note:&nbsp;
-                    </span>
-                    {s.note}
+                  <div className="mt-2 text-xs opacity-50">
+                    {`Note: ${s.note}`}
                   </div>
                 )}
-              </div>
-
-              <button
-                onClick={() => handleDelete(s.id)}
-                className="text-xs px-2 py-1 border border-red-300 text-red-600 rounded-md hover:bg-red-50"
-              >
-                Supprimer
-              </button>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       )}
+      <div className="w-full flex gap-2 items-center">
+        <Button
+          onClick={handleExport}
+          className="flex-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-600 dark:text-neutral-300"
+        >
+          Export CSV
+        </Button>
+        <Button
+          onClick={handleClear}
+          className="bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
+        >
+          Vider
+        </Button>
+      </div>
     </div>
   );
 }

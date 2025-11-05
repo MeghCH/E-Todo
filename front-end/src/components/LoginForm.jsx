@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Button } from "./Button";
+import { TextInput } from "./TextInput";
 
 export function LoginForm({ headline }) {
   const [email, setEmail] = useState("");
@@ -11,29 +13,29 @@ export function LoginForm({ headline }) {
   return (
     <>
       <div className="flex flex-col items-center justify-center">
-        <div className="text-white text-2xl font-bold mb-4">{headline}</div>
+        <div className="text-2xl font-bold mb-4">{headline}</div>
       </div>
-      <div className="w-120 h-70 rounded-4xl shadow-lg flex flex-col gap-3 items-center justify-center bg-white/5">
-        <input
+      <div className="w-full max-w-120 rounded-2xl flex flex-col gap-3 items-center justify-center bg-neutral-200 dark:bg-neutral-900 p-4">
+        <TextInput
           type="email"
-          className="w-100 h-10 border-2 border-white/70 rounded-md text-white/90 focus:border-orange-400 focus:outline-none"
+          className="w-full"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="enter email here"
+          onChange={setEmail}
+          placeholder="Email"
         />
-        <input
+        <TextInput
           type="password"
-          className="w-100 h-10 border-2 border-white/70 rounded-md text-white/90 focus:border-orange-400 focus:outline-none"
+          className="w-full"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="enter password here"
+          onChange={setPassword}
+          placeholder="Password"
         />
-        <button
+        <Button
           onClick={() => handleSubmit(email, password)}
-          className="font-bold text-white/80 w-100 h-10 bg-orange-400 rounded-sm"
+          className="w-full"
         >
           LOGIN
-        </button>
+        </Button>
       </div>
     </>
   );
