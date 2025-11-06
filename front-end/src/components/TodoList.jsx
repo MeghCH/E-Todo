@@ -148,8 +148,8 @@ function TodoList() {
                       {...provided.dragHandleProps}
                       className={`p-2 rounded-md transition ${
                         snapshot.isDragging
-                          ? "bg-gray-100 shadow-md"
-                          : "bg-white"
+                          ? "bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white cursor-pointer"
+                          : "bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white cursor-pointer"
                       }`}
                     >
                       <TodoItem
