@@ -1,6 +1,9 @@
 import { useState, useMemo } from "react";
 import TodoItem from "./TodoItem";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { Button } from "./Button";
+import { TextInput } from "./TextInput";
+import { SelectArea } from "./SelectArea";
 
 const PRIORITIES = [
   { value: "high", label: "Haute" },
@@ -78,23 +81,24 @@ function TodoList() {
 
       <div className="flex flex-col md:flex-row gap-2 items-stretch md:items-end">
         <div className="flex-1 flex gap-2">
-          <input
+          <TextInput
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={setText}
             placeholder="Nouvelle tâche…"
-            className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="flex-1 rounded-md px-3 py-2"
           />
-          <input
+
+          <TextInput
             type="date"
             value={due}
-            onChange={(e) => setDue(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            onChange={setDue}
+            className=" rounded-md px-3 py-2 cursor-pointer"
             aria-label="Date d'échéance"
           />
-          <select
+          <SelectArea
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="rounded-md px-3 py-2 cursor-pointer"
             aria-label="Priorité"
           >
             {PRIORITIES.map((p) => (
@@ -102,27 +106,24 @@ function TodoList() {
                 {p.label}
               </option>
             ))}
-          </select>
+          </SelectArea>
         </div>
-        <button
-          onClick={addTask}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-        >
+        <Button onClick={addTask} className="px-4 py-2">
           Ajouter
-        </button>
+        </Button>
       </div>
 
       <div className="flex items-center gap-3">
         <label className="text-sm text-gray-500">Tri :</label>
-        <select
+        <SelectArea
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="border border-gray-300 rounded-md px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="rounded-md px-3 py-1.5"
         >
           <option value="manual">Manuel (Drag & Drop)</option>
           <option value="date">Par date</option>
           <option value="priority">Par priorité</option>
-        </select>
+        </SelectArea>
       </div>
 
       <DragDropContext onDragEnd={handleOnDragEnd}>
