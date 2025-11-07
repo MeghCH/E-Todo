@@ -69,7 +69,6 @@ function TodoList() {
     setStatus("not_started");
   }
 
-  
   function deleteTask(key) {
     setTasks((prev) => prev.filter((t) => t.key !== key));
   }
@@ -151,10 +150,6 @@ function TodoList() {
               </SelectArea>
             </div>
           </div>
-
-          <Button onClick={addTask} className="px-4 py-2 self-end">
-            Ajouter
-          </Button>
         </div>
 
         {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
@@ -171,6 +166,9 @@ function TodoList() {
           <option value="due_time">Date d'échéance</option>
           <option value="status">Statut</option>
         </SelectArea>
+        <Button onClick={addTask} className="px-4 py-2 self-end">
+          Ajouter
+        </Button>
       </div>
 
       <DragDropContext onDragEnd={handleOnDragEnd}>
