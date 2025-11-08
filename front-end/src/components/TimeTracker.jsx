@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { TextInput } from "./TextInput";
 import { Button } from "./Button";
+import { startTimer, stopTimer, getTimeHistory } from "../api/timer";
 
 function formatDuration(ms) {
   const totalSeconds = Math.floor(ms / 1000);
@@ -19,10 +20,8 @@ function loadSessions() {
     return [];
   }
 }
-
 function saveSessions(sessions) {
   localStorage.setItem("tt_sessions", JSON.stringify(sessions));
-
   window.dispatchEvent(new Event("tt:sessions-updated"));
 }
 
@@ -33,22 +32,41 @@ function TimeTracker() {
   const [note, setNote] = useState("");
 
   useEffect(() => {
+    (async () => {
+      try {
+        const server = await getTimeHistory();
+        if (Array.isArray(server) && server.length) saveSessions(server);
+      } catch {}
+    })();
+  }, []);
+
+  useEffect(() => {
     let interval;
     if (isRunning) {
-      interval = setInterval(() => {
-        setElapsedTime(Date.now() - startTime);
-      }, 1000);
+      interval = setInterval(
+        () => setElapsedTime(Date.now() - startTime),
+        1000
+      );
     }
     return () => clearInterval(interval);
   }, [isRunning, startTime]);
 
-  const handleStart = () => {
+  const handleStart = async () => {
     const now = Date.now();
     setIsRunning(true);
     setStartTime(now - elapsedTime);
+
+    try {
+      const res = await startTimer(note.trim() || null);
+
+      if (res?.startedAt) {
+        setStartTime(new Date(res.startedAt).getTime());
+        setElapsedTime(Date.now() - new Date(res.startedAt).getTime());
+      }
+    } catch {}
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
     if (!isRunning || startTime == null) {
       setIsRunning(false);
       return;
@@ -57,7 +75,7 @@ function TimeTracker() {
     const duration = end - startTime;
 
     const sessions = loadSessions();
-    sessions.push({
+    const localSession = {
       id:
         crypto.randomUUID?.() ||
         `${end}-${Math.random().toString(36).slice(2)}`,
@@ -65,10 +83,19 @@ function TimeTracker() {
       end,
       durationMs: duration,
       note: note.trim() || null,
-    });
-    saveSessions(sessions);
+    };
+    saveSessions([...sessions, localSession]);
 
     setIsRunning(false);
+
+    try {
+      const saved = await stopTimer();
+
+      const updated = loadSessions().map((s) =>
+        s.id === localSession.id ? saved : s
+      );
+      saveSessions(updated);
+    } catch {}
   };
 
   const handleReset = () => {

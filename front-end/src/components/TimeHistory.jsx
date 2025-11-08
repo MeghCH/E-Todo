@@ -2,6 +2,8 @@ import { useEffect, useState, useMemo } from "react";
 import { Button } from "./Button";
 import { RiDeleteBinFill } from "@remixicon/react";
 
+import { getTimeHistory, deleteSession, clearAllSessions } from "../api/timer";
+
 function loadSessions() {
   try {
     return JSON.parse(localStorage.getItem("tt_sessions")) || [];
@@ -42,13 +44,30 @@ function toCSV(rows) {
 
 export default function TimeHistory() {
   const [sessions, setSessions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setSessions(loadSessions().sort((a, b) => b.end - a.end));
+
     const onUpdate = () => {
       setSessions(loadSessions().sort((a, b) => b.end - a.end));
     };
     window.addEventListener("tt:sessions-updated", onUpdate);
+
+    (async () => {
+      try {
+        setLoading(true);
+        const server = await getTimeHistory();
+        if (Array.isArray(server)) {
+          saveSessions(server);
+          setSessions(server.sort((a, b) => b.end - a.end));
+        }
+      } catch {
+      } finally {
+        setLoading(false);
+      }
+    })();
+
     return () => window.removeEventListener("tt:sessions-updated", onUpdate);
   }, []);
 
@@ -57,15 +76,39 @@ export default function TimeHistory() {
     [sessions]
   );
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
+    const prev = sessions;
     const next = sessions.filter((s) => s.id !== id);
     setSessions(next);
     saveSessions(next);
+
+    try {
+      await deleteSession(id);
+    } catch (e) {
+      console.error(e);
+
+      setSessions(prev);
+      saveSessions(prev);
+      alert("Suppression côté serveur impossible.");
+    }
   };
 
-  const handleClear = () => {
+  const handleClear = async () => {
+    const ok = window.confirm("Tout supprimer ?");
+    if (!ok) return;
+
+    const prev = sessions;
     setSessions([]);
     saveSessions([]);
+
+    try {
+      await clearAllSessions();
+    } catch (e) {
+      console.error(e);
+      setSessions(prev);
+      saveSessions(prev);
+      alert("Vidage côté serveur impossible.");
+    }
   };
 
   const handleExport = () => {
@@ -86,7 +129,9 @@ export default function TimeHistory() {
   return (
     <div className="flex flex-col items-start justify-start w-full gap-2">
       <div className="flex items-center justify-between w-full">
-        <h2 className="text-base text-neutral-500">Historique</h2>
+        <h2 className="text-base text-neutral-500">
+          Historique {loading ? "· sync…" : ""}
+        </h2>
         <p className="text-base font-mono flex gap-2 items-center">
           <span className="text-sm opacity-25 flex-1">Total</span>
           {formatDuration(totalMs)}
@@ -131,6 +176,7 @@ export default function TimeHistory() {
                   <Button
                     onClick={() => handleDelete(s.id)}
                     className="size-6 p-0 bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
+                    title="Supprimer"
                   >
                     <RiDeleteBinFill size={14} />
                   </Button>
@@ -146,15 +192,14 @@ export default function TimeHistory() {
                   </p>
                 </div>
                 {s.note && (
-                  <div className="mt-2 text-xs opacity-50">
-                    {`Note: ${s.note}`}
-                  </div>
+                  <div className="mt-2 text-xs opacity-50">{`Note: ${s.note}`}</div>
                 )}
               </li>
             );
           })}
         </ul>
       )}
+
       <div className="w-full flex gap-2 items-center">
         <Button
           onClick={handleExport}

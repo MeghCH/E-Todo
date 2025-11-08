@@ -9,24 +9,18 @@ export function LoginPage() {
   const navigate = useNavigate();
 
   async function handleSubmit({ email, password }) {
+    if (loading) return;
     setLoading(true);
     setError(null);
+
     try {
       const data = await login({ email, password });
 
-      if (data.token) {
-        localStorage.setItem("access_token", data.token);
-      }
-
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-
-      const role = data.user?.role;
+      const role = data?.user?.role;
       if (role === "manager") {
         navigate("/home");
       } else {
-        navigate("/employe"); 
+        navigate("/employe");
       }
     } catch (e) {
       setError(e?.message || "Erreur de connexion");

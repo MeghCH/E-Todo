@@ -55,8 +55,7 @@ export default function RegisterPage() {
         firstname: form.firstname.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,
-        birthdate: form.birthdate || null,
-        address: form.address || null,
+        date: form.date || null,
       });
 
       setOk("Employé créé avec succès.");

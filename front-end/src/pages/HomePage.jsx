@@ -1,8 +1,9 @@
 import TimeTracker from "../components/TimeTracker";
 import TimeHistory from "../components/TimeHistory";
 import TodoList from "../components/TodoList";
+import TimeHistoryMana from "../components/TimeHistoryMana";
 
-export function HomePage({ isAdmin }) {
+export function HomePage() {
   return (
     <div className="size-full flex p-2 gap-2">
       <div className="h-full flex flex-col items-start justify-start gap-4 rounded-2xl bg-neutral-200 dark:bg-neutral-900 w-96 p-4 overflow-auto">
@@ -11,9 +12,9 @@ export function HomePage({ isAdmin }) {
         <TimeHistory />
       </div>
 
-      {isAdmin ? (
-        <div className="h-full flex-1 flex flex-col justify-start items-center bg-neutral-200 dark:bg-neutral-900 rounded-2xl p-4 overflow-auto" />
-      ) : null}
+      <div className="h-full flex-1 flex flex-col justify-start items-center bg-neutral-200 dark:bg-neutral-900 rounded-2xl p-4 overflow-auto">
+        <TimeHistoryMana />
+      </div>
 
       <div className="h-full flex-1 flex flex-col justify-start items-center bg-neutral-200 dark:bg-neutral-900 rounded-2xl p-4 overflow-auto">
         <TodoList />
