@@ -11,6 +11,10 @@ export function LoginForm({ headline, onSubmit, loading, error }) {
     if (onSubmit) onSubmit({ email, password });
   }
 
+  if (data.user) {
+    localStorage.setItem("user", JSON.stringify(data.user));
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
