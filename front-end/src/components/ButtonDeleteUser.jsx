@@ -20,11 +20,8 @@ function ButtonDeleteUser() {
   };
 
   return (
-    <Button
-      onClick={onDelete}
-      className="bg-red-600 text-white rounded px-4 py-2 hover:bg-red-700"
-    >
-      Supprimer l’utilisateur
+    <Button onClick={onDelete} className="  rounded px-4 py-2 ">
+      Supprimer l'utilisateur
     </Button>
   );
 }
