@@ -31,13 +31,16 @@ function Layout() {
       <div className="fixed top-2 right-2 flex gap-1">
         {isManager && isHomePage ? <RegisterButton /> : null}
         <ThemeToggle />
-        <ColorSwitch />
+
+        <ColorSwitch className="hidden sm:flex" />
       </div>
 
       <div className="fixed top-2 left-2 flex gap-1">
         <ButtonUserInfo />
         <ButtonDeco />
-        <WeatherWidget />
+        <div className="hidden lg:block">
+          <WeatherWidget />
+        </div>
       </div>
 
       <div className="pt-14 size-full">
