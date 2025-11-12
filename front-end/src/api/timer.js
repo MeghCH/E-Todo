@@ -1,7 +1,4 @@
-const BASE_URL =
-  import.meta?.env?.VITE_API_BASE_URL ||
-  process.env.REACT_APP_API_BASE_URL ||
-  "http://localhost:4000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
 
 function authHeader() {
   const t = localStorage.getItem("access_token");
@@ -23,6 +20,44 @@ function handleAuthFailure(status) {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
   }
+}
+
+export async function startTimer(data) {
+  const res = await fetch(`${BASE_URL}/api/timer/start`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader(),
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    handleAuthFailure(res.status);
+    return handleError(res, "Erreur lors du démarrage du timer");
+  }
+
+  return res.json();
+}
+
+export async function stopTimer(id) {
+  const res = await fetch(
+    `${BASE_URL}/api/timer/stop/${encodeURIComponent(id)}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeader(),
+      },
+    }
+  );
+
+  if (!res.ok) {
+    handleAuthFailure(res.status);
+    return handleError(res, "Erreur lors de l'arrêt du timer");
+  }
+
+  return res.json();
 }
 
 export async function getTimeHistory() {
