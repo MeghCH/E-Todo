@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUser, updateUser } from "../api/users";
 import ButtonDeleteUser from "../components/ButtonDeleteUser";
+import { TextInput } from "../components/TextInput";
 
 export default function UserEditPage() {
   const { id } = useParams();
@@ -44,21 +45,21 @@ export default function UserEditPage() {
         Modifier l’utilisateur #{id}
       </h2>
 
-      <input
+      <TextInput
         type="text"
         value={user.firstname}
         onChange={(e) => setUser({ ...user, firstname: e.target.value })}
         className="border rounded p-2"
         placeholder="Prénom"
       />
-      <input
+      <TextInput
         type="text"
         value={user.name}
         onChange={(e) => setUser({ ...user, name: e.target.value })}
         className="border rounded p-2"
         placeholder="Nom"
       />
-      <input
+      <TextInput
         type="email"
         value={user.email}
         onChange={(e) => setUser({ ...user, email: e.target.value })}
@@ -66,12 +67,12 @@ export default function UserEditPage() {
         placeholder="Email"
       />
 
-      <button
+      <Button
         onClick={handleUpdate}
-        className="bg-blue-600 text-white rounded px-4 py-2 mt-2 hover:bg-blue-700 transition"
+        className="rounded px-4 py-2 mt-2 hover transition"
       >
         Mettre à jour
-      </button>
+      </Button>
 
       <ButtonDeleteUser>Supprimer</ButtonDeleteUser>
 
