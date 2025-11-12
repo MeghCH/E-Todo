@@ -31,7 +31,7 @@ export default function ViewUserInfo() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <Button onClick={handleSearch} className=" text-white rounded px-4 py-2">
+      <Button onClick={handleSearch} className="rounded px-4 py-2">
         Rechercher
       </Button>
 
