@@ -1,7 +1,4 @@
-const BASE_URL =
-  import.meta?.env?.VITE_API_BASE_URL ||
-  process.env.REACT_APP_API_BASE_URL ||
-  "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
@@ -12,16 +9,13 @@ function authHeader() {
 
 // PUBLIC
 
-export async function register(credentials) {
-  const res = await fetch(`${BASE_URL}/api/auth/register`, {
+export async function login(credentials) {
+  const res = await fetch(`${BASE_URL}/api/auth/login`, {
     method: "POST",
     headers: JSON_HEADERS,
     body: JSON.stringify(credentials),
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => null);
-    throw new Error(err?.message || "Erreur d'inscription");
-  }
+  if (!res.ok) throw new Error("Erreur login");
   const data = await res.json();
   if (data?.token) localStorage.setItem("access_token", data.token);
   if (data?.user) localStorage.setItem("user", JSON.stringify(data.user));

@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
 
 function authHeader() {
   const t = localStorage.getItem("access_token");
@@ -22,28 +22,41 @@ function handleAuthFailure(status) {
   }
 }
 
-export async function startTimer(note) {
+export async function startTimer(data) {
   const res = await fetch(`${BASE_URL}/api/timer/start`, {
     method: "POST",
-    headers: { ...authHeader(), "Content-Type": "application/json" },
-    body: JSON.stringify({ note }),
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader(),
+    },
+    body: JSON.stringify(data),
   });
+
   if (!res.ok) {
     handleAuthFailure(res.status);
-    return handleError(res, "Erreur démarrage timer");
+    return handleError(res, "Erreur lors du démarrage du timer");
   }
+
   return res.json();
 }
 
-export async function stopTimer() {
-  const res = await fetch(`${BASE_URL}/api/timer/stop`, {
-    method: "POST",
-    headers: { ...authHeader() },
-  });
+export async function stopTimer(id) {
+  const res = await fetch(
+    `${BASE_URL}/api/timer/stop/${encodeURIComponent(id)}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeader(),
+      },
+    }
+  );
+
   if (!res.ok) {
     handleAuthFailure(res.status);
-    return handleError(res, "Erreur arrêt timer");
+    return handleError(res, "Erreur lors de l'arrêt du timer");
   }
+
   return res.json();
 }
 

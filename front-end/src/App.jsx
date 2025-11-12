@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { EmployeHomePage } from "./pages/EmployeHomePage";
@@ -35,19 +35,18 @@ function Layout() {
       <div className="fixed top-2 left-2 flex gap-1">
         <ButtonDeco />
         <WeatherWidget />
-
         {isManager && isHomePage ? <RegisterButton /> : null}
       </div>
 
       <div className="pt-14 size-full">
         <Routes>
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/employe" element={<EmployeHomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/users/:id/edit" element={<UserEditPage />} />
-          <Route path="/users/view" element={<UserInfoPage />} />{" "}
+          <Route path="/users/view" element={<UserInfoPage />} />
         </Routes>
       </div>
     </div>
@@ -55,9 +54,5 @@ function Layout() {
 }
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      <Layout />
-    </BrowserRouter>
-  );
+  return <Layout />;
 }
