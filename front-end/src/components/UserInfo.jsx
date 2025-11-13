@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { getUserByIdOrEmail } from "../api/users";
+import { Button } from "./Button";
+import { TextInput } from "./TextInput";
 
 export default function ViewUserInfo() {
   const [query, setQuery] = useState("");
@@ -18,27 +20,25 @@ export default function ViewUserInfo() {
   };
 
   return (
-    <div className="flex flex-col gap-2 max-w-sm mx-auto mt-6 p-4 border rounded">
-      <h2 className="font-semibold text-lg">Rechercher un utilisateur</h2>
+    <div className="flex flex-col gap-2 max-w-sm mx-auto mt-6 p-4 rounded-2xl bg-neutral-200 dark:bg-neutral-900 shadow-md">
+      <h2 className="font-semibold text-lg text-center">
+        Rechercher un utilisateur
+      </h2>
 
-      <input
+      <TextInput
         type="text"
         placeholder="ID ou email"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="border rounded p-2"
       />
-      <button
-        onClick={handleSearch}
-        className="bg-blue-600 text-white rounded px-4 py-2"
-      >
+      <Button onClick={handleSearch} className="rounded px-4 py-2">
         Rechercher
-      </button>
+      </Button>
 
       {error && <p className="text-red-600 text-sm">{error}</p>}
 
       {user && (
-        <div className="mt-3 p-3 bg-gray-100 rounded">
+        <div className="mt-3 p-3 bg-neutral-100 dark:bg-neutral-900 rounded-2xl">
           <p>
             <strong>Prénom :</strong> {user.firstname}
           </p>

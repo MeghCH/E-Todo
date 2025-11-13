@@ -7,8 +7,6 @@ function authHeader() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// PUBLIC
-
 export async function login(credentials) {
   const res = await fetch(`${BASE_URL}/api/auth/login`, {
     method: "POST",
@@ -21,8 +19,6 @@ export async function login(credentials) {
   if (data?.user) localStorage.setItem("user", JSON.stringify(data.user));
   return data;
 }
-
-// PROTEGE
 
 export async function getMe() {
   const res = await fetch(`${BASE_URL}/api/user`, {
@@ -41,16 +37,27 @@ export async function getMyTodos() {
 }
 
 export async function createEmployee(payload) {
-  const res = await fetch(`${BASE_URL}/api/users`, {
+  const res = await fetch(`${BASE_URL}/register`, {
     method: "POST",
-    headers: { ...authHeader(), ...JSON_HEADERS },
-    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: payload.name,
+      firstname: payload.firstname,
+      email: payload.email,
+      password: payload.password,
+      date: payload.date ?? null,
+    }),
   });
+
+  const data = await res.json().catch(() => null);
+
   if (!res.ok) {
-    const err = await res.json().catch(() => null);
-    throw new Error(err?.message || "Échec de création de l'employé.");
+    throw new Error(data?.msg || "Échec de création de l'employé.");
   }
-  return res.json();
+
+  return data;
 }
 
 export async function getUser(id) {

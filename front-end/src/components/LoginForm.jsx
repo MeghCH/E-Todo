@@ -8,17 +8,13 @@ export function LoginForm({ headline, onSubmit, loading, error }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (onSubmit) onSubmit({ email, password });
-  }
-
-  if (data.user) {
-    localStorage.setItem("user", JSON.stringify(data.user));
+    onSubmit?.({ email, password });
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center justify-center w-full max-w-sm bg-neutral-100 dark:bg-neutral-900 rounded-2xl p-6 gap-4 shadow-md"
+      className="flex flex-col items-center justify-center w-full max-w-sm bg-neutral-200 dark:bg-neutral-900 rounded-2xl p-6 gap-4 shadow-md"
     >
       <h1 className="text-2xl font-bold mb-2">{headline}</h1>
 
