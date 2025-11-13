@@ -53,7 +53,7 @@ function ColorButton({ color, seleted, onChange }) {
   );
 }
 
-export default function ColorSwitch() {
+export default function ColorSwitch({ className }) {
   const [currentColor, setCurrentColor] = useState("blue");
 
   useEffect(() => {
@@ -73,7 +73,12 @@ export default function ColorSwitch() {
   }, []);
 
   return (
-    <div className="bg-neutral-200 dark:bg-neutral-800 rounded-md dark:bg-neutral-80 flex px-3 gap-3 items-center justify-center">
+    <div
+      className={twMerge(
+        "bg-neutral-200 dark:bg-neutral-800 rounded-md flex px-3 gap-3 items-center justify-center",
+        className
+      )}
+    >
       <ColorButton
         color={COLORS.blue}
         seleted={currentColor == "blue"}

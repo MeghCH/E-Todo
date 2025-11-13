@@ -19,17 +19,6 @@ export default function RegisterPage() {
   const [error, setError] = useState(null);
   const [ok, setOk] = useState(null);
 
-  useEffect(() => {
-    let user = null;
-    try {
-      const raw = localStorage.getItem("user");
-      if (raw) user = JSON.parse(raw);
-    } catch {}
-    if (!user || user.role !== "manager") {
-      navigate("/employe");
-    }
-  }, [navigate]);
-
   function bind(key) {
     return {
       value: form[key],
