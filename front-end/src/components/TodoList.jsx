@@ -96,7 +96,7 @@ export default function TodoList() {
 
   const handleUpdateStatus = async (id, nextStatus) => {
     try {
-      const updated = await updateTodo(id, { status: nextStatus }); // PUT
+      const updated = await updateTodo(id, { status: nextStatus });
       setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
     } catch (e) {
       console.error(e);
