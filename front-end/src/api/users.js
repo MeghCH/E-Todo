@@ -7,15 +7,31 @@ function authHeader() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+async function handleError(res, defaultMsg) {
+  const text = await res.text().catch(() => null);
+
+  try {
+    const json = text ? JSON.parse(text) : null;
+    const msg = json?.msg || defaultMsg;
+    throw new Error(msg);
+  } catch {
+    throw new Error(text || defaultMsg);
+  }
+}
+
 // PUBLIC
 
 export async function login(credentials) {
-  const res = await fetch(`${BASE_URL}/api/auth/login`, {
+  const res = await fetch(`${BASE_URL}/login`, {
     method: "POST",
     headers: JSON_HEADERS,
     body: JSON.stringify(credentials),
   });
-  if (!res.ok) throw new Error("Erreur login");
+
+  if (!res.ok) {
+    return handleError(res, "Erreur login");
+  }
+
   const data = await res.json();
   if (data?.token) localStorage.setItem("access_token", data.token);
   if (data?.user) localStorage.setItem("user", JSON.stringify(data.user));
@@ -25,18 +41,26 @@ export async function login(credentials) {
 // PROTEGE
 
 export async function getMe() {
-  const res = await fetch(`${BASE_URL}/api/user`, {
+  const res = await fetch(`${BASE_URL}/user`, {
     headers: { ...authHeader() },
   });
-  if (!res.ok) throw new Error("Erreur GET /user");
+
+  if (!res.ok) {
+    return handleError(res, "Erreur GET /user");
+  }
+
   return res.json();
 }
 
 export async function getMyTodos() {
-  const res = await fetch(`${BASE_URL}/api/user/todos`, {
+  const res = await fetch(`${BASE_URL}/user/todos`, {
     headers: { ...authHeader() },
   });
-  if (!res.ok) throw new Error("Erreur GET /user/todos");
+
+  if (!res.ok) {
+    return handleError(res, "Erreur GET /user/todos");
+  }
+
   return res.json();
 }
 
@@ -51,7 +75,6 @@ export async function createEmployee(payload) {
       firstname: payload.firstname,
       email: payload.email,
       password: payload.password,
-      date: payload.date ?? null,
     }),
   });
 
@@ -65,37 +88,53 @@ export async function createEmployee(payload) {
 }
 
 export async function getUser(id) {
-  const res = await fetch(`${BASE_URL}/api/users/${encodeURIComponent(id)}`, {
+  const res = await fetch(`${BASE_URL}/users/${encodeURIComponent(id)}`, {
     headers: { ...authHeader() },
   });
-  if (!res.ok) throw new Error("Erreur GET utilisateur");
+
+  if (!res.ok) {
+    return handleError(res, "Erreur GET utilisateur");
+  }
+
   return res.json();
 }
 
 export async function getUserByIdOrEmail(idOrEmail) {
   const res = await fetch(
-    `${BASE_URL}/api/users/${encodeURIComponent(idOrEmail)}`,
+    `${BASE_URL}/users/${encodeURIComponent(idOrEmail)}`,
     { headers: { ...authHeader() } }
   );
-  if (!res.ok) throw new Error("Erreur récupération utilisateur");
+
+  if (!res.ok) {
+    return handleError(res, "Erreur récupération utilisateur");
+  }
+
   return res.json();
 }
 
 export async function updateUser(id, data) {
-  const res = await fetch(`${BASE_URL}/api/users/${encodeURIComponent(id)}`, {
+  const res = await fetch(`${BASE_URL}/users/${encodeURIComponent(id)}`, {
     method: "PUT",
     headers: { ...authHeader(), ...JSON_HEADERS },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Erreur PUT utilisateur");
+
+  if (!res.ok) {
+    return handleError(res, "Erreur PUT utilisateur");
+  }
+
   return res.json();
 }
 
 export async function deleteUser(id) {
-  const res = await fetch(`${BASE_URL}/api/users/${encodeURIComponent(id)}`, {
+  const res = await fetch(`${BASE_URL}/users/${encodeURIComponent(id)}`, {
     method: "DELETE",
     headers: { ...authHeader() },
   });
-  if (!res.ok) throw new Error("Erreur DELETE utilisateur");
+
+  if (!res.ok) {
+    return handleError(res, "Erreur DELETE utilisateur");
+  }
+
   return true;
 }

@@ -12,9 +12,11 @@ router.get("/", authenticateToken, async (req, res) => {
         "SELECT id, email, password, name, firstname, created_at FROM user WHERE id = ?",
         [req.user.id]
       );
+
     if (users.length === 0) {
       return res.status(404).json({ msg: "Notfound" });
     }
+
     res.json(users[0]);
   } catch (error) {
     console.error(error);
@@ -27,6 +29,7 @@ router.get("/todos", authenticateToken, async (req, res) => {
     const [todos] = await db
       .promise()
       .query("SELECT * FROM todo WHERE user_id = ?", [req.user.id]);
+
     res.json(todos);
   } catch (error) {
     console.error(error);

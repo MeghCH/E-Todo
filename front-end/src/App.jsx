@@ -18,7 +18,9 @@ function Layout() {
   let user = null;
   try {
     const raw = localStorage.getItem("user");
-    if (raw) user = JSON.parse(raw);
+    if (raw) {
+      user = JSON.parse(raw);
+    }
   } catch {
     user = null;
   }
@@ -29,9 +31,8 @@ function Layout() {
   return (
     <div className="bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white w-full h-screen">
       <div className="fixed top-2 right-2 flex gap-1">
-        <RegisterButton />
+        {isManager && isHomePage && <RegisterButton />}
         <ThemeToggle />
-
         <ColorSwitch className="hidden sm:flex" />
       </div>
 

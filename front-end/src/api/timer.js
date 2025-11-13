@@ -10,7 +10,7 @@ function handleError(res, fallbackMsg) {
     .json()
     .catch(() => null)
     .then((err) => {
-      const msg = err?.message || fallbackMsg;
+      const msg = err?.msg || err?.message || fallbackMsg;
       throw new Error(msg);
     });
 }
@@ -23,13 +23,13 @@ function handleAuthFailure(status) {
 }
 
 export async function startTimer(data) {
-  const res = await fetch(`${BASE_URL}/api/timer/start`, {
+  const res = await fetch(`${BASE_URL}/timer/start`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       ...authHeader(),
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data ?? {}),
   });
 
   if (!res.ok) {
@@ -40,17 +40,14 @@ export async function startTimer(data) {
   return res.json();
 }
 
-export async function stopTimer(id) {
-  const res = await fetch(
-    `${BASE_URL}/api/timer/stop/${encodeURIComponent(id)}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...authHeader(),
-      },
-    }
-  );
+export async function stopTimer() {
+  const res = await fetch(`${BASE_URL}/timer/stop`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader(),
+    },
+  });
 
   if (!res.ok) {
     handleAuthFailure(res.status);
@@ -61,47 +58,55 @@ export async function stopTimer(id) {
 }
 
 export async function getTimeHistory() {
-  const res = await fetch(`${BASE_URL}/api/timer`, {
+  const res = await fetch(`${BASE_URL}/timer`, {
     headers: { ...authHeader() },
   });
+
   if (!res.ok) {
     handleAuthFailure(res.status);
     return handleError(res, "Erreur historique timer");
   }
+
   return res.json();
 }
 
 export async function deleteSession(id) {
-  const res = await fetch(`${BASE_URL}/api/timer/${encodeURIComponent(id)}`, {
+  const res = await fetch(`${BASE_URL}/timer/${encodeURIComponent(id)}`, {
     method: "DELETE",
     headers: { ...authHeader() },
   });
+
   if (!res.ok) {
     handleAuthFailure(res.status);
     return handleError(res, "Erreur suppression session");
   }
+
   return true;
 }
 
 export async function clearAllSessions() {
-  const res = await fetch(`${BASE_URL}/api/timer`, {
+  const res = await fetch(`${BASE_URL}/timer`, {
     method: "DELETE",
     headers: { ...authHeader() },
   });
+
   if (!res.ok) {
     handleAuthFailure(res.status);
     return handleError(res, "Erreur vidage sessions");
   }
+
   return true;
 }
 
 export async function getAllTimeHistories() {
-  const res = await fetch(`${BASE_URL}/api/timer/all`, {
+  const res = await fetch(`${BASE_URL}/timer/all`, {
     headers: { ...authHeader() },
   });
+
   if (!res.ok) {
     handleAuthFailure(res.status);
     return handleError(res, "Erreur récupération historique complet");
   }
+
   return res.json();
 }
