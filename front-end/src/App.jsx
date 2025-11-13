@@ -29,7 +29,7 @@ function Layout() {
   return (
     <div className="bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white w-full h-screen">
       <div className="fixed top-2 right-2 flex gap-1">
-        {isManager && isHomePage ? <RegisterButton /> : null}
+        <RegisterButton />
         <ThemeToggle />
 
         <ColorSwitch className="hidden sm:flex" />
