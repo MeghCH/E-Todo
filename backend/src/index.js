@@ -1,5 +1,4 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
 
@@ -18,21 +17,18 @@ app.use(
     credentials: true,
   })
 );
-app.use(bodyParser.json());
 
-app.use("/", authRoutes);
-app.use("/api/auth", authRoutes);
+app.use(express.json());
 
-app.use("/", userRoutes);
-app.use("/", usersRoutes);
-app.use("/api", userRoutes);
-app.use("/api", usersRoutes);
+app.use(authRoutes);
 
-app.use("/", todoRoutes);
-app.use("/api", todoRoutes);
+app.use("/user", userRoutes);
 
-app.use("/", timerRoutes);
-app.use("/api", timerRoutes);
+app.use("/users", usersRoutes);
+
+app.use("/todos", todoRoutes);
+
+app.use("/timer", timerRoutes);
 
 app.use(notFound);
 

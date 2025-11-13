@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get("/:identifier", authenticateToken, async (req, res) => {
   const { identifier } = req.params;
+
   try {
     let query =
       "SELECT id, email, password, name, firstname, created_at FROM user WHERE ";
@@ -21,6 +22,7 @@ router.get("/:identifier", authenticateToken, async (req, res) => {
     }
 
     const [users] = await db.promise().query(query, params);
+
     if (users.length === 0) {
       return res.status(404).json({ msg: "Notfound" });
     }
@@ -46,18 +48,21 @@ router.put("/:id", authenticateToken, async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+
     await db
       .promise()
       .query(
         "UPDATE user SET email = ?, password = ?, name = ?, firstname = ? WHERE id = ?",
         [email, hashedPassword, name, firstname, id]
       );
+
     const [updatedUser] = await db
       .promise()
       .query(
         "SELECT id, email, password, name, firstname, created_at FROM user WHERE id = ?",
         [id]
       );
+
     res.json(updatedUser[0]);
   } catch (error) {
     console.error(error);
@@ -75,6 +80,7 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     await db.promise().query("DELETE FROM todo WHERE user_id = ?", [id]);
     await db.promise().query("DELETE FROM user WHERE id = ?", [id]);
+
     res.json({ msg: `Successfullydeletedrecordnumber:${id}` });
   } catch (error) {
     console.error(error);

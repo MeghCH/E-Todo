@@ -40,10 +40,10 @@ export default function ViewUserInfo() {
       {user && (
         <div className="mt-3 p-3 bg-neutral-100 dark:bg-neutral-900 rounded-2xl">
           <p>
-            <strong>Prénom :</strong> {user.firstname}
+            <strong>Nom :</strong> {user.firstname}
           </p>
           <p>
-            <strong>Nom :</strong> {user.lastname}
+            <strong>Prénom :</strong> {user.name}
           </p>
           <p>
             <strong>Email :</strong> {user.email}

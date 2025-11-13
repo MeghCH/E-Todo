@@ -16,6 +16,7 @@ router.post("/register", async (req, res) => {
     const [existingUser] = await db
       .promise()
       .query("SELECT id FROM user WHERE email = ?", [email]);
+
     if (existingUser.length > 0) {
       return res.status(409).json({ msg: "Accountalreadyexists" });
     }
@@ -35,9 +36,10 @@ router.post("/register", async (req, res) => {
 
     const [userInfo] = await db
       .promise()
-      .query("SELECT id, email, name, firstname, role FROM user WHERE id = ?", [
-        result.insertId,
-      ]);
+      .query(
+        "SELECT id, email, name, firstname, role, created_at FROM user WHERE id = ?",
+        [result.insertId]
+      );
 
     res.status(201).json({ token, user: userInfo[0] });
   } catch (error) {
@@ -57,6 +59,7 @@ router.post("/login", async (req, res) => {
     const [users] = await db
       .promise()
       .query("SELECT * FROM user WHERE email = ?", [email]);
+
     if (users.length === 0) {
       return res.status(401).json({ msg: "InvalidCredentials" });
     }
@@ -76,9 +79,10 @@ router.post("/login", async (req, res) => {
 
     const [userInfo] = await db
       .promise()
-      .query("SELECT id, email, name, firstname, role FROM user WHERE id = ?", [
-        user.id,
-      ]);
+      .query(
+        "SELECT id, email, name, firstname, role, created_at FROM user WHERE id = ?",
+        [user.id]
+      );
 
     res.json({ token, user: userInfo[0] });
   } catch (error) {

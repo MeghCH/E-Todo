@@ -14,6 +14,20 @@ const STATUSES = [
   { value: "done", label: "Terminé" },
 ];
 
+const STATUS_TO_DB = {
+  not_started: "not started",
+  todo: "todo",
+  in_progress: "in progress",
+  done: "done",
+};
+
+const STATUS_FROM_DB = {
+  "not started": "not_started",
+  todo: "todo",
+  "in progress": "in_progress",
+  done: "done",
+};
+
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const isValidDate = (s) => DATE_RE.test(s);
 const cmpDate = (a, b) => (a || "").localeCompare(b || "");
@@ -36,7 +50,13 @@ export default function TodoList() {
       try {
         const data = await listTodos();
 
-        setTodos(data);
+        // normaliser les statuts venant de la DB
+        const normalized = data.map((t) => ({
+          ...t,
+          status: STATUS_FROM_DB[t.status] ?? "not_started",
+        }));
+
+        setTodos(normalized);
       } catch (e) {
         console.error(e);
       }
@@ -66,14 +86,23 @@ export default function TodoList() {
     }
 
     try {
-      const newTodo = await createTodo({
+      const payload = {
         title: title.trim(),
         description: description.trim(),
         created_at: createdAt,
+        // MySQL accepte "YYYY-MM-DD" pour un DATE ou un DATETIME (00:00:00)
         due_time: dueTime || null,
-        status,
-      });
-      setTodos((prev) => [...prev, newTodo]);
+        status: STATUS_TO_DB[status] ?? "not started",
+      };
+
+      const newTodoFromApi = await createTodo(payload);
+
+      const normalized = {
+        ...newTodoFromApi,
+        status: STATUS_FROM_DB[newTodoFromApi.status] ?? "not_started",
+      };
+
+      setTodos((prev) => [...prev, normalized]);
       setTitle("");
       setDescription("");
       setCreatedAt("");
@@ -96,8 +125,16 @@ export default function TodoList() {
 
   const handleUpdateStatus = async (id, nextStatus) => {
     try {
-      const updated = await updateTodo(id, { status: nextStatus }); // PUT
-      setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
+      const updatedFromApi = await updateTodo(id, {
+        status: STATUS_TO_DB[nextStatus] ?? "not started",
+      });
+
+      const normalized = {
+        ...updatedFromApi,
+        status: STATUS_FROM_DB[updatedFromApi.status] ?? "not_started",
+      };
+
+      setTodos((prev) => prev.map((t) => (t.id === id ? normalized : t)));
     } catch (e) {
       console.error(e);
     }
