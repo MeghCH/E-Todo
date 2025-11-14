@@ -49,7 +49,7 @@ router.post("/", authenticateToken, async (req, res) => {
   }
 
   try {
-    const finalStatus = status && status.trim() ? status : "not started";
+    const finalStatus = status && status.trim() ? status : "not_started";
 
     const [result] = await db
       .promise()
@@ -76,26 +76,48 @@ router.put("/:id", authenticateToken, async (req, res) => {
   const { title, description, due_time, status } = req.body;
 
   try {
+    const [rows] = await db
+      .promise()
+      .query(
+        "SELECT id, title, description, due_time, status FROM todo WHERE id = ? AND user_id = ?",
+        [id, req.user.id]
+      );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ msg: "Not found" });
+    }
+
+    const current = rows[0];
+
+    const newTitle = title ?? current.title;
+    const newDescription = description ?? current.description;
+    const newDueTime = due_time ?? current.due_time;
+    const newStatus = status ?? current.status;
+
     const [result] = await db.promise().query(
       `UPDATE todo 
          SET title = ?, description = ?, due_time = ?, status = ?
          WHERE id = ? AND user_id = ?`,
-      [title, description, due_time, status, id, req.user.id]
+      [newTitle, newDescription, newDueTime, newStatus, id, req.user.id]
     );
 
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       return res.status(404).json({ msg: "Not found" });
+    }
 
-    const [rows] = await db
+    const [updated] = await db
       .promise()
       .query(
         "SELECT id, title, description, created_at, due_time, status, user_id FROM todo WHERE id = ? AND user_id = ?",
         [id, req.user.id]
       );
 
-    res.json(rows[0]);
+    res.json(updated[0]);
   } catch (error) {
-    return serverError(res, error);
+    console.error(error);
+    return res.status(500).json({
+      msg: error.sqlMessage || error.message || "Internal server error",
+    });
   }
 });
 

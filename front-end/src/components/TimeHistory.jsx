@@ -207,12 +207,7 @@ export default function TimeHistory() {
         >
           Export CSV
         </Button>
-        <Button
-          onClick={handleClear}
-          className="bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
-        >
-          Vider
-        </Button>
+        <Button onClick={handleClear}>Vider</Button>
       </div>
     </div>
   );

@@ -50,7 +50,6 @@ export default function TodoList() {
       try {
         const data = await listTodos();
 
-        // normaliser les statuts venant de la DB
         const normalized = data.map((t) => ({
           ...t,
           status: STATUS_FROM_DB[t.status] ?? "not_started",
@@ -90,7 +89,6 @@ export default function TodoList() {
         title: title.trim(),
         description: description.trim(),
         created_at: createdAt,
-        // MySQL accepte "YYYY-MM-DD" pour un DATE ou un DATETIME (00:00:00)
         due_time: dueTime || null,
         status: STATUS_TO_DB[status] ?? "not started",
       };
@@ -126,7 +124,7 @@ export default function TodoList() {
   const handleUpdateStatus = async (id, nextStatus) => {
     try {
       const updatedFromApi = await updateTodo(id, {
-        status: STATUS_TO_DB[nextStatus] ?? "not started",
+        status: STATUS_TO_DB[nextStatus] ?? "not_started",
       });
 
       const normalized = {
@@ -256,9 +254,7 @@ export default function TodoList() {
                       <TodoItem
                         task={task}
                         deleteTask={() => handleDelete(task.id)}
-                        updateStatus={(next) =>
-                          handleUpdateStatus(task.id, next)
-                        }
+                        updateStatus={handleUpdateStatus}
                       />
                     </div>
                   )}
