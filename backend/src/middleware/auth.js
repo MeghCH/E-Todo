@@ -1,34 +1,20 @@
 const jwt = require("jsonwebtoken");
-const db = require("../config/db");
 
-const authenticateToken = async (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+function authenticateToken(req, res, next) {
+  const header = req.header("Authorization");
+  const token = header ? header.split(" ")[1] : null;
 
   if (!token) {
-    return res.status(401).json({ msg: "No token provided" });
+    return res.status(401).json({ msg: "No token, authorization denied" });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.SECRET);
-
-    const [users] = await db
-      .promise()
-      .query(
-        "SELECT id, email, name, firstname, role, created_at FROM user WHERE id = ?",
-        [decoded.id]
-      );
-
-    if (users.length === 0) {
-      return res.status(404).json({ msg: "Notfound" });
-    }
-
-    req.user = users[0];
-
+    req.user = decoded;
     next();
-  } catch (err) {
-    return res.status(403).json({ msg: "Tokeninvalid" });
+  } catch (error) {
+    return res.status(401).json({ msg: "Token is not valid" });
   }
-};
+}
 
 module.exports = { authenticateToken };

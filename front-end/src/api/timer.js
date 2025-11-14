@@ -5,16 +5,6 @@ function authHeader() {
   return t ? { Authorization: `Bearer ${t}` } : {};
 }
 
-function handleError(res, fallbackMsg) {
-  return res
-    .json()
-    .catch(() => null)
-    .then((err) => {
-      const msg = err?.msg || err?.message || fallbackMsg;
-      throw new Error(msg);
-    });
-}
-
 function handleAuthFailure(status) {
   if (status === 401 || status === 403) {
     localStorage.removeItem("access_token");
@@ -22,39 +12,71 @@ function handleAuthFailure(status) {
   }
 }
 
+async function readError(res, fallback) {
+  const txt = await res.text().catch(() => null);
+  try {
+    const json = txt ? JSON.parse(txt) : null;
+    throw new Error(json?.msg || fallback);
+  } catch {
+    throw new Error(txt || fallback);
+  }
+}
+
+function normalizeSession(row) {
+  return {
+    id: row.id,
+    userId: row.user_id ?? row.userId ?? null,
+    userName:
+      row.userName ??
+      (row.firstname && row.name ? `${row.firstname} ${row.name}` : null),
+    start:
+      row.start ?? (row.start_time ? new Date(row.start_time).getTime() : null),
+    end: row.end ?? (row.end_time ? new Date(row.end_time).getTime() : null),
+    durationMs:
+      typeof row.durationMs === "number"
+        ? row.durationMs
+        : typeof row.duration === "number"
+        ? row.duration * 1000
+        : null,
+    note: row.note ?? null,
+  };
+}
+
+function normalizeArray(rows) {
+  return Array.isArray(rows) ? rows.map(normalizeSession) : [];
+}
+
 export async function startTimer(data) {
+  const body = data && typeof data === "object" ? data : { note: data ?? null };
+
   const res = await fetch(`${BASE_URL}/timer/start`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeader(),
-    },
-    body: JSON.stringify(data ?? {}),
+    headers: { "Content-Type": "application/json", ...authHeader() },
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
     handleAuthFailure(res.status);
-    return handleError(res, "Erreur lors du démarrage du timer");
+    return readError(res, "Erreur lors du démarrage du timer");
   }
 
-  return res.json();
+  const raw = await res.json();
+  return normalizeSession(raw);
 }
 
 export async function stopTimer() {
   const res = await fetch(`${BASE_URL}/timer/stop`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeader(),
-    },
+    headers: { "Content-Type": "application/json", ...authHeader() },
   });
 
   if (!res.ok) {
     handleAuthFailure(res.status);
-    return handleError(res, "Erreur lors de l'arrêt du timer");
+    return readError(res, "Erreur lors de l'arrêt du timer");
   }
 
-  return res.json();
+  const raw = await res.json();
+  return normalizeSession(raw);
 }
 
 export async function getTimeHistory() {
@@ -64,10 +86,11 @@ export async function getTimeHistory() {
 
   if (!res.ok) {
     handleAuthFailure(res.status);
-    return handleError(res, "Erreur historique timer");
+    return readError(res, "Erreur historique timer");
   }
 
-  return res.json();
+  const raw = await res.json();
+  return normalizeArray(raw);
 }
 
 export async function deleteSession(id) {
@@ -78,7 +101,7 @@ export async function deleteSession(id) {
 
   if (!res.ok) {
     handleAuthFailure(res.status);
-    return handleError(res, "Erreur suppression session");
+    return readError(res, "Erreur suppression session");
   }
 
   return true;
@@ -92,7 +115,7 @@ export async function clearAllSessions() {
 
   if (!res.ok) {
     handleAuthFailure(res.status);
-    return handleError(res, "Erreur vidage sessions");
+    return readError(res, "Erreur vidage sessions");
   }
 
   return true;
@@ -104,9 +127,10 @@ export async function getAllTimeHistories() {
   });
 
   if (!res.ok) {
-    handleAuthFailure(res.status);
-    return handleError(res, "Erreur récupération historique complet");
+    // handleAuthFailure(res.status);
+    return readError(res, "Erreur récupération historique complet");
   }
 
-  return res.json();
+  const raw = await res.json();
+  return normalizeArray(raw);
 }

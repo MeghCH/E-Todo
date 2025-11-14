@@ -11,15 +11,15 @@ function serverError(res, err) {
 
 router.get("/", authenticateToken, async (req, res) => {
   try {
-    const [todos] = await db
+    const [rows] = await db
       .promise()
       .query(
         "SELECT id, title, description, created_at, due_time, status, user_id FROM todo WHERE user_id = ? ORDER BY id DESC",
         [req.user.id]
       );
-    res.json(todos);
-  } catch (error) {
-    return serverError(res, error);
+    res.json(rows);
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
@@ -32,12 +32,10 @@ router.get("/:id", authenticateToken, async (req, res) => {
         "SELECT id, title, description, created_at, due_time, status, user_id FROM todo WHERE id = ? AND user_id = ?",
         [id, req.user.id]
       );
-
     if (rows.length === 0) return res.status(404).json({ msg: "Not found" });
-
     res.json(rows[0]);
-  } catch (error) {
-    return serverError(res, error);
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
@@ -49,7 +47,7 @@ router.post("/", authenticateToken, async (req, res) => {
   }
 
   try {
-    const finalStatus = status && status.trim() ? status : "not_started";
+    const finalStatus = status?.trim() || "not_started";
 
     const [result] = await db
       .promise()
@@ -58,16 +56,16 @@ router.post("/", authenticateToken, async (req, res) => {
         [title, description, due_time, finalStatus, req.user.id]
       );
 
-    const [rows] = await db
+    const [todo] = await db
       .promise()
       .query(
         "SELECT id, title, description, created_at, due_time, status, user_id FROM todo WHERE id = ? AND user_id = ?",
         [result.insertId, req.user.id]
       );
 
-    res.status(201).json(rows[0]);
-  } catch (error) {
-    return serverError(res, error);
+    res.status(201).json(todo[0]);
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
@@ -78,32 +76,25 @@ router.put("/:id", authenticateToken, async (req, res) => {
   try {
     const [rows] = await db
       .promise()
-      .query(
-        "SELECT id, title, description, due_time, status FROM todo WHERE id = ? AND user_id = ?",
-        [id, req.user.id]
-      );
+      .query("SELECT * FROM todo WHERE id = ? AND user_id = ?", [
+        id,
+        req.user.id,
+      ]);
 
-    if (rows.length === 0) {
-      return res.status(404).json({ msg: "Not found" });
-    }
+    if (rows.length === 0) return res.status(404).json({ msg: "Not found" });
 
     const current = rows[0];
-
     const newTitle = title ?? current.title;
-    const newDescription = description ?? current.description;
-    const newDueTime = due_time ?? current.due_time;
+    const newDesc = description ?? current.description;
+    const newDue = due_time ?? current.due_time;
     const newStatus = status ?? current.status;
 
-    const [result] = await db.promise().query(
-      `UPDATE todo 
-         SET title = ?, description = ?, due_time = ?, status = ?
-         WHERE id = ? AND user_id = ?`,
-      [newTitle, newDescription, newDueTime, newStatus, id, req.user.id]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ msg: "Not found" });
-    }
+    await db
+      .promise()
+      .query(
+        "UPDATE todo SET title = ?, description = ?, due_time = ?, status = ? WHERE id = ? AND user_id = ?",
+        [newTitle, newDesc, newDue, newStatus, id, req.user.id]
+      );
 
     const [updated] = await db
       .promise()
@@ -113,17 +104,13 @@ router.put("/:id", authenticateToken, async (req, res) => {
       );
 
     res.json(updated[0]);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      msg: error.sqlMessage || error.message || "Internal server error",
-    });
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
 router.delete("/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
-
   try {
     const [result] = await db
       .promise()
@@ -136,8 +123,8 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       return res.status(404).json({ msg: "Not found" });
 
     res.json({ msg: `Successfully deleted record number: ${id}` });
-  } catch (error) {
-    return serverError(res, error);
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 

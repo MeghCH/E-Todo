@@ -1,55 +1,44 @@
-import { useState } from "react";
-import { getUserByIdOrEmail } from "../api/users";
-import { Button } from "./Button";
-import { TextInput } from "./TextInput";
+import { useEffect, useState } from "react";
+import { getCurrentUser } from "../api/users";
 
-export default function ViewUserInfo() {
-  const [query, setQuery] = useState("");
+export default function UserInfo() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
 
-  const handleSearch = async () => {
-    setError("");
-    setUser(null);
-    try {
-      const data = await getUserByIdOrEmail(query);
-      setUser(data);
-    } catch (err) {
-      setError("Utilisateur introuvable.");
-    }
-  };
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getCurrentUser();
+        setUser(data);
+      } catch {
+        setError("Impossible de récupérer vos informations.");
+      }
+    })();
+  }, []);
+
+  if (error) return <p className="text-red-600">{error}</p>;
+  if (!user) return <p>Chargement…</p>;
 
   return (
-    <div className="flex flex-col gap-2 max-w-sm mx-auto mt-6 p-4 rounded-2xl bg-neutral-200 dark:bg-neutral-900 shadow-md">
-      <h2 className="font-semibold text-lg text-center">
-        Rechercher un utilisateur
+    <div className="p-6 rounded-2xl bg-neutral-200 dark:bg-neutral-900 shadow-md">
+      <h2 className="font-semibold text-lg text-center mb-3">
+        Mes informations
       </h2>
 
-      <TextInput
-        type="text"
-        placeholder="ID ou email"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <Button onClick={handleSearch} className="rounded px-4 py-2">
-        Rechercher
-      </Button>
-
-      {error && <p className="text-red-600 text-sm">{error}</p>}
-
-      {user && (
-        <div className="mt-3 p-3 bg-neutral-100 dark:bg-neutral-900 rounded-2xl">
-          <p>
-            <strong>Nom :</strong> {user.firstname}
-          </p>
-          <p>
-            <strong>Prénom :</strong> {user.name}
-          </p>
-          <p>
-            <strong>Email :</strong> {user.email}
-          </p>
-        </div>
-      )}
+      <div className="flex flex-col gap-2 text-sm">
+        <p>
+          <strong>Nom :</strong> {user.name ?? "—"}
+        </p>
+        <p>
+          <strong>Prénom :</strong> {user.firstname ?? "—"}
+        </p>
+        <p>
+          <strong>Email :</strong> {user.email ?? "—"}
+        </p>
+        <p>
+          <strong>ID :</strong> {user.id ?? "—"}
+        </p>
+      </div>
     </div>
   );
 }

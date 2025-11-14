@@ -1,5 +1,4 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
-
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
 function authHeader() {
@@ -7,27 +6,19 @@ function authHeader() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-async function handleError(r, defaultMsg) {
-  const text = await r.text().catch(() => null);
-
+async function readError(res, fallback) {
+  const txt = await res.text().catch(() => null);
   try {
-    const json = text ? JSON.parse(text) : null;
-    const msg = json?.msg || defaultMsg;
-    throw new Error(msg);
+    const json = txt ? JSON.parse(txt) : null;
+    throw new Error(json?.msg || fallback);
   } catch {
-    throw new Error(text || defaultMsg);
+    throw new Error(txt || fallback);
   }
 }
 
 export async function listTodos() {
-  const r = await fetch(`${BASE_URL}/todos`, {
-    headers: { ...authHeader() },
-  });
-
-  if (!r.ok) {
-    return handleError(r, "Erreur listTodos");
-  }
-
+  const r = await fetch(`${BASE_URL}/todos`, { headers: { ...authHeader() } });
+  if (!r.ok) return readError(r, "Erreur listTodos");
   return r.json();
 }
 
@@ -35,11 +26,7 @@ export async function getTodo(id) {
   const r = await fetch(`${BASE_URL}/todos/${encodeURIComponent(id)}`, {
     headers: { ...authHeader() },
   });
-
-  if (!r.ok) {
-    return handleError(r, "Erreur getTodo");
-  }
-
+  if (!r.ok) return readError(r, "Erreur getTodo");
   return r.json();
 }
 
@@ -49,11 +36,7 @@ export async function createTodo(payload) {
     headers: { ...authHeader(), ...JSON_HEADERS },
     body: JSON.stringify(payload),
   });
-
-  if (!r.ok) {
-    return handleError(r, "Erreur createTodo");
-  }
-
+  if (!r.ok) return readError(r, "Erreur createTodo");
   return r.json();
 }
 
@@ -63,11 +46,7 @@ export async function updateTodo(id, updatedFields) {
     headers: { ...authHeader(), ...JSON_HEADERS },
     body: JSON.stringify(updatedFields),
   });
-
-  if (!r.ok) {
-    return handleError(r, "Erreur updateTodo");
-  }
-
+  if (!r.ok) return readError(r, "Erreur updateTodo");
   return r.json();
 }
 
@@ -76,10 +55,6 @@ export async function deleteTodo(id) {
     method: "DELETE",
     headers: { ...authHeader() },
   });
-
-  if (!r.ok) {
-    return handleError(r, "Erreur deleteTodo");
-  }
-
+  if (!r.ok) return readError(r, "Erreur deleteTodo");
   return true;
 }
