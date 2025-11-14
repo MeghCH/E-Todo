@@ -11,6 +11,7 @@ import UserEditPage from "./pages/UserEditPage";
 import UserInfoPage from "./pages/UserInfoPage";
 import ButtonDeco from "./components/ButtonDeco";
 import ButtonUserInfo from "./components/ButtonUserInfo";
+import ButtonHome from "./components/ButtonHome";
 
 function Layout() {
   const location = useLocation();
@@ -31,14 +32,15 @@ function Layout() {
   return (
     <div className="bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white w-full h-screen">
       <div className="fixed top-2 right-2 flex gap-1">
-        {isManager && isHomePage && <RegisterButton />}
         <ThemeToggle />
         <ColorSwitch className="hidden sm:flex" />
+        <ButtonDeco />
       </div>
 
       <div className="fixed top-2 left-2 flex gap-1">
+        <ButtonHome />
         <ButtonUserInfo />
-        <ButtonDeco />
+        {isManager && isHomePage && <RegisterButton />}
         <div className="hidden lg:block">
           <WeatherWidget />
         </div>
