@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginForm } from "../components/LoginForm";
-import { login } from "../api/auth";
+import { login, logout } from "../api/auth";
 
 export function LoginPage() {
   const [error, setError] = useState(null);
@@ -10,19 +10,34 @@ export function LoginPage() {
 
   async function handleSubmit({ email, password }) {
     if (loading) return;
+
     setLoading(true);
     setError(null);
 
     try {
       const data = await login({ email, password });
 
-      const role = data?.user?.role;
+      if (!data?.token) {
+        throw new Error("Token manquant");
+      }
+
+      const me = data.user;
+      if (!me) {
+        throw new Error("Utilisateur manquant dans la réponse");
+      }
+
+      localStorage.setItem("access_token", data.token);
+      localStorage.setItem("user", JSON.stringify(me));
+
+      const role = me.role;
+
       if (role === "manager") {
-        navigate("/home");
+        navigate("/home", { replace: true });
       } else {
-        navigate("/employe");
+        navigate("/employe", { replace: true });
       }
     } catch (e) {
+      logout?.();
       setError(e?.message || "Erreur de connexion");
     } finally {
       setLoading(false);

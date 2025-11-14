@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Button } from "./Button";
 import { RiDeleteBinFill } from "@remixicon/react";
-
 import { getTimeHistory, deleteSession, clearAllSessions } from "../api/timer";
 
 function loadSessions() {
@@ -18,7 +17,7 @@ function saveSessions(sessions) {
 }
 
 function formatDuration(ms) {
-  const totalSeconds = Math.floor(ms / 1000);
+  const totalSeconds = Math.floor((ms || 0) / 1000);
   const h = Math.floor(totalSeconds / 3600);
   const m = Math.floor((totalSeconds % 3600) / 60);
   const s = totalSeconds % 60;
@@ -30,10 +29,10 @@ function formatDuration(ms) {
 function toCSV(rows) {
   const header = ["Début", "Fin", "Durée (hh:mm:ss)", "Durée (ms)", "Note"];
   const lines = rows.map((r) => [
-    new Date(r.start).toISOString(),
-    new Date(r.end).toISOString(),
+    r.start ? new Date(r.start).toISOString() : "",
+    r.end ? new Date(r.end).toISOString() : "",
     formatDuration(r.durationMs),
-    r.durationMs,
+    r.durationMs ?? "",
     (r.note || "").replaceAll('"', '""'),
   ]);
   const csv = [header, ...lines]
@@ -46,12 +45,13 @@ export default function TimeHistory() {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setSessions(loadSessions().sort((a, b) => b.end - a.end));
+  const sortByEndDesc = (arr) =>
+    [...arr].sort((a, b) => (b.end ?? 0) - (a.end ?? 0));
 
-    const onUpdate = () => {
-      setSessions(loadSessions().sort((a, b) => b.end - a.end));
-    };
+  useEffect(() => {
+    setSessions(sortByEndDesc(loadSessions()));
+
+    const onUpdate = () => setSessions(sortByEndDesc(loadSessions()));
     window.addEventListener("tt:sessions-updated", onUpdate);
 
     (async () => {
@@ -60,7 +60,7 @@ export default function TimeHistory() {
         const server = await getTimeHistory();
         if (Array.isArray(server)) {
           saveSessions(server);
-          setSessions(server.sort((a, b) => b.end - a.end));
+          setSessions(sortByEndDesc(server));
         }
       } catch {
       } finally {
@@ -86,7 +86,6 @@ export default function TimeHistory() {
       await deleteSession(id);
     } catch (e) {
       console.error(e);
-
       setSessions(prev);
       saveSessions(prev);
       alert("Suppression côté serveur impossible.");
@@ -143,27 +142,36 @@ export default function TimeHistory() {
       ) : (
         <ul className="flex flex-col gap-0.5 w-full">
           {sessions.map((s) => {
-            const startTimeCode = new Date(s.start);
-            const endTimeCode = new Date(s.end);
+            const startTimeCode = s.start ? new Date(s.start) : null;
+            const endTimeCode = s.end ? new Date(s.end) : null;
 
-            const startDate = startTimeCode.toLocaleDateString("fr-FR", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-            });
-            const startTime = startTimeCode.toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
-            const endDate = endTimeCode.toLocaleDateString("fr-FR", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-            });
-            const endTime = endTimeCode.toLocaleTimeString("fr-FR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
+            const startDate = startTimeCode
+              ? startTimeCode.toLocaleDateString("fr-FR", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                })
+              : "-";
+            const startTime = startTimeCode
+              ? startTimeCode.toLocaleTimeString("fr-FR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "-";
+            const endDate = endTimeCode
+              ? endTimeCode.toLocaleDateString("fr-FR", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                })
+              : "-";
+            const endTime = endTimeCode
+              ? endTimeCode.toLocaleTimeString("fr-FR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "-";
+
             return (
               <li
                 key={s.id}
