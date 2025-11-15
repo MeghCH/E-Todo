@@ -20,17 +20,17 @@ export default function UserInfo() {
   if (!user) return <p>Chargement…</p>;
 
   return (
-    <div className="p-6 rounded-2xl bg-neutral-200 dark:bg-neutral-900 shadow-md">
+    <div className="size-full p-6 rounded-2xl bg-neutral-200 dark:bg-neutral-900 shadow-md">
       <h2 className="font-semibold text-lg text-center mb-3">
         Mes informations
       </h2>
 
       <div className="flex flex-col gap-2 text-sm">
         <p>
-          <strong>Nom :</strong> {user.name ?? "—"}
+          <strong>Prénom :</strong> {user.name ?? "—"}
         </p>
         <p>
-          <strong>Prénom :</strong> {user.firstname ?? "—"}
+          <strong>Nom :</strong> {user.firstname ?? "—"}
         </p>
         <p>
           <strong>Email :</strong> {user.email ?? "—"}

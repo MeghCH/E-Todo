@@ -162,7 +162,7 @@ export default function TodoList() {
     <div className="flex flex-col gap-4 w-full">
       <h2 className="text-base text-neutral-500">Todo List</h2>
 
-      <div className="bg-neutral-200 dark:bg-neutral-900 p-4 rounded-lg">
+      <div className="bg-neutral-200 dark:bg-neutral-900 p-1 rounded-lg">
         <div className="flex flex-col md:flex-row gap-3">
           <div className="flex-1 flex flex-col gap-2">
             <TextInput
