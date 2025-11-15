@@ -22,13 +22,13 @@ const STATUS_LABELS = {
 function statusStyle(status) {
   switch (status) {
     case "done":
-      return "bg-green-200 text-emerald-700 border-emerald-300";
+      return "bg-green-200 text-emerald-700 border-emerald-400";
     case "in_progress":
-      return "bg-blue-200 text-blue-700 border-blue-300";
+      return "bg-blue-200 text-blue-700 border-blue-400";
     case "todo":
-      return "bg-amber-200 text-amber-700 border-amber-300";
+      return "bg-amber-200 text-amber-700 border-amber-400";
     default:
-      return "bg-gray-100 text-gray-700 border-gray-300";
+      return "bg-gray-100 text-gray-700 border-gray-400";
   }
 }
 
@@ -48,17 +48,17 @@ function TodoItem({ task, deleteTask, updateStatus }) {
         <div className="flex flex-wrap gap-2 items-center">
           <span className="font-semibold">{task.title}</span>
           <span
-            className={`px-2 py-0.5 rounded-xl border ${statusStyle(
+            className={`px-2 py-0.5 rounded-lg border ${statusStyle(
               task.status
             )}`}
           >
             {STATUS_LABELS[task.status]}
           </span>
           <span
-            className={`px-2 py-0.5 rounded-xl border ${
+            className={`px-2 py-0.5 rounded-lg ${
               overdue
                 ? "bg-red-50 text-red-700 border-red-200"
-                : "bg-gray-50 text-gray-600 border-gray-200"
+                : "bg-neutral-100 dark:bg-neutral-700"
             }`}
           >
             Échéance : {formatDate(task.due_time)}

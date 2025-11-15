@@ -71,7 +71,7 @@ export default function UserEdit() {
   if (!user) return <p className="p-4 text-red-600">{msg}</p>;
 
   return (
-    <div className="max-w-md mx-auto p-6 flex flex-col gap-3 bg-neutral-200 dark:bg-neutral-900 rounded-2xl shadow-md">
+    <div className="size-full max-w-md mx-auto p-6 flex flex-col gap-3 bg-neutral-200 dark:bg-neutral-900 rounded-2xl shadow-md">
       <h2 className="text-xl font-semibold mb-2 text-center">
         Modifier mon profil
       </h2>
@@ -80,14 +80,14 @@ export default function UserEdit() {
         type="text"
         value={user.firstname}
         onChange={(e) => setUser({ ...user, firstname: e.target.value })}
-        placeholder="Prénom"
+        placeholder="Nom"
       />
 
       <TextInput
         type="text"
         value={user.name}
         onChange={(e) => setUser({ ...user, name: e.target.value })}
-        placeholder="Nom"
+        placeholder="Prénom"
       />
 
       <TextInput
