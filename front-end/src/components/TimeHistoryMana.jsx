@@ -24,16 +24,14 @@ export default function TimeHistoryMana() {
   if (!sessions.length) return <p>Aucune session trouvée.</p>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-4">
-        Historique global des employés
-      </h1>
+    <div className="flex flex-col items-start justify-start w-full gap-2">
+      <h1 className="text-base text-neutral-500">Historique des employés</h1>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 w-full">
         {sessions.map((s) => (
           <div
             key={s.id}
-            className="bg-neutral-200 dark:bg-neutral-800 p-4 rounded-lg flex flex-col"
+            className="bg-neutral-300 dark:bg-neutral-800 p-4 rounded-lg flex flex-col"
           >
             <p className="text-sm text-neutral-500 mb-1">
               {s.userName ?? `Employé ${s.userId ?? "inconnu"}`}

@@ -11,6 +11,8 @@ export default function ButtonDeco() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
 
+    window.dispatchEvent(new Event("auth-changed"));
+
     navigate("/login", { replace: true });
   };
 

@@ -19,20 +19,24 @@ import { getCurrentUser } from "./api/users";
 function Layout() {
   const location = useLocation();
 
-  const [me, setMe] = useState(() => {
+  const readUserFromStorage = () => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null");
     } catch {
       return null;
     }
-  });
+  };
+
+  const [me, setMe] = useState(() => readUserFromStorage());
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) return;
-
-    if (!me) {
-      (async () => {
+    const ensureMe = async () => {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        setMe(null);
+        return;
+      }
+      if (!me) {
         try {
           const user = await getCurrentUser();
           localStorage.setItem("user", JSON.stringify(user));
@@ -42,15 +46,30 @@ function Layout() {
           localStorage.removeItem("user");
           setMe(null);
         }
-      })();
-    }
+      }
+    };
+    ensureMe();
+  }, []);
+
+  useEffect(() => {
+    const syncFromStorage = () => {
+      const u = readUserFromStorage();
+      setMe(u);
+    };
+
+    window.addEventListener("storage", syncFromStorage);
+    window.addEventListener("auth-changed", syncFromStorage);
+
+    return () => {
+      window.removeEventListener("storage", syncFromStorage);
+      window.removeEventListener("auth-changed", syncFromStorage);
+    };
   }, []);
 
   const isManager = useMemo(() => me?.role === "manager", [me]);
-  const isHomePage = location.pathname === "/home";
 
   return (
-    <div className="bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white w-full h-screen">
+    <div className="font-inter bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white w-full h-screen overflow-auto lg:overflow-hidden">
       <div className="fixed top-2 right-2 flex gap-1">
         <ThemeToggle />
         <ColorSwitch className="hidden sm:flex" />
@@ -60,7 +79,7 @@ function Layout() {
       <div className="fixed top-2 left-2 flex gap-1">
         <ButtonHome />
         <ButtonUserInfo />
-        {isManager && isHomePage && <RegisterButton />}
+        {isManager && <RegisterButton />}
         <div className="hidden lg:block">
           <WeatherWidget />
         </div>
