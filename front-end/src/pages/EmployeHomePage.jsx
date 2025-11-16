@@ -10,7 +10,7 @@ export function EmployeHomePage() {
           h-auto lg:h-full lg:shrink-0
           flex flex-col items-start justify-start gap-4
           rounded-2xl bg-neutral-200 dark:bg-neutral-900
-          w-full lg:w-96 p-4
+          w-full lg:w-96 p-4 overflow-scroll
         "
       >
         <TimeTracker />
@@ -24,7 +24,7 @@ export function EmployeHomePage() {
           w-full lg:flex-1
           flex flex-col justify-start items-center
           bg-neutral-200 dark:bg-neutral-900
-          rounded-2xl p-4
+          rounded-2xl p-4 overflow-scroll
         "
       >
         <TodoList />
