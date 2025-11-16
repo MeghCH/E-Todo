@@ -29,6 +29,8 @@ export function LoginPage() {
       localStorage.setItem("access_token", data.token);
       localStorage.setItem("user", JSON.stringify(me));
 
+      window.dispatchEvent(new Event("auth-changed"));
+
       const role = me.role;
 
       if (role === "manager") {
@@ -38,6 +40,9 @@ export function LoginPage() {
       }
     } catch (e) {
       logout?.();
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user");
+      window.dispatchEvent(new Event("auth-changed"));
       setError(e?.message || "Erreur de connexion");
     } finally {
       setLoading(false);
