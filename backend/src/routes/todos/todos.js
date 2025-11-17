@@ -4,113 +4,127 @@ const { authenticateToken } = require("../../middleware/auth");
 
 const router = express.Router();
 
+function serverError(res, err) {
+  console.error(err);
+  return res.status(500).json({ msg: "Internal server error" });
+}
+
 router.get("/", authenticateToken, async (req, res) => {
   try {
-    const [todos] = await db.promise().query("SELECT * FROM todo");
-    res.json(todos);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internalservererror" });
+    const [rows] = await db
+      .promise()
+      .query(
+        "SELECT id, title, description, created_at, due_time, status, user_id FROM todo WHERE user_id = ? ORDER BY id DESC",
+        [req.user.id]
+      );
+    res.json(rows);
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
 router.get("/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
   try {
-    const [todos] = await db
+    const [rows] = await db
       .promise()
-      .query("SELECT * FROM todo WHERE id = ? AND user_id = ?", [
-        id,
-        req.user.id,
-      ]);
-    if (todos.length === 0) {
-      return res.status(404).json({ msg: "Notfound" });
-    }
-    res.json(todos[0]);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internalservererror" });
+      .query(
+        "SELECT id, title, description, created_at, due_time, status, user_id FROM todo WHERE id = ? AND user_id = ?",
+        [id, req.user.id]
+      );
+    if (rows.length === 0) return res.status(404).json({ msg: "Not found" });
+    res.json(rows[0]);
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
 router.post("/", authenticateToken, async (req, res) => {
-  const { title, description, due_time, status, user_id } = req.body;
+  const { title, description, due_time, status } = req.body;
 
-  if (!title || !description || !due_time || !user_id) {
-    return res.status(400).json({ msg: "Badparameter" });
-  }
-
-  if (parseInt(user_id) !== req.user.id) {
-    return res.status(403).json({ msg: "Notfound" });
+  if (!title || !description || !due_time) {
+    return res.status(400).json({ msg: "Bad parameter" });
   }
 
   try {
+    const finalStatus = status?.trim() || "not_started";
+
     const [result] = await db
       .promise()
       .query(
         "INSERT INTO todo (title, description, due_time, status, user_id) VALUES (?, ?, ?, ?, ?)",
-        [title, description, due_time, status || "not started", user_id]
+        [title, description, due_time, finalStatus, req.user.id]
       );
-    const [newTodo] = await db
+
+    const [todo] = await db
       .promise()
-      .query("SELECT * FROM todo WHERE id = ?", [result.insertId]);
-    res.status(201).json(newTodo[0]);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internalservererror" });
+      .query(
+        "SELECT id, title, description, created_at, due_time, status, user_id FROM todo WHERE id = ? AND user_id = ?",
+        [result.insertId, req.user.id]
+      );
+
+    res.status(201).json(todo[0]);
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
 router.put("/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
-  const { title, description, due_time, status, user_id } = req.body;
+  const { title, description, due_time, status } = req.body;
 
   try {
-    const [existingTodo] = await db
+    const [rows] = await db
       .promise()
-      .query("SELECT user_id FROM todo WHERE id = ?", [id]);
-    if (existingTodo.length === 0) {
-      return res.status(404).json({ msg: "Notfound" });
-    }
-    if (existingTodo[0].user_id !== req.user.id) {
-      return res.status(403).json({ msg: "Notfound" });
-    }
+      .query("SELECT * FROM todo WHERE id = ? AND user_id = ?", [
+        id,
+        req.user.id,
+      ]);
+
+    if (rows.length === 0) return res.status(404).json({ msg: "Not found" });
+
+    const current = rows[0];
+    const newTitle = title ?? current.title;
+    const newDesc = description ?? current.description;
+    const newDue = due_time ?? current.due_time;
+    const newStatus = status ?? current.status;
 
     await db
       .promise()
       .query(
-        "UPDATE todo SET title = ?, description = ?, due_time = ?, status = ?, user_id = ? WHERE id = ?",
-        [title, description, due_time, status, user_id, id]
+        "UPDATE todo SET title = ?, description = ?, due_time = ?, status = ? WHERE id = ? AND user_id = ?",
+        [newTitle, newDesc, newDue, newStatus, id, req.user.id]
       );
-    const [updatedTodo] = await db
+
+    const [updated] = await db
       .promise()
-      .query("SELECT * FROM todo WHERE id = ?", [id]);
-    res.json(updatedTodo[0]);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internalservererror" });
+      .query(
+        "SELECT id, title, description, created_at, due_time, status, user_id FROM todo WHERE id = ? AND user_id = ?",
+        [id, req.user.id]
+      );
+
+    res.json(updated[0]);
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
 router.delete("/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
-
   try {
-    const [existingTodo] = await db
+    const [result] = await db
       .promise()
-      .query("SELECT user_id FROM todo WHERE id = ?", [id]);
-    if (existingTodo.length === 0) {
-      return res.status(404).json({ msg: "Notfound" });
-    }
-    if (existingTodo[0].user_id !== req.user.id) {
-      return res.status(403).json({ msg: "Notfound" });
-    }
+      .query("DELETE FROM todo WHERE id = ? AND user_id = ?", [
+        id,
+        req.user.id,
+      ]);
 
-    await db.promise().query("DELETE FROM todo WHERE id = ?", [id]);
-    res.json({ msg: `Successfullydeletedrecordnumber:${id}` });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internalservererror" });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ msg: "Not found" });
+
+    res.json({ msg: `Successfully deleted record number: ${id}` });
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 

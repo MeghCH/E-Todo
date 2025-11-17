@@ -1,6 +1,7 @@
 import { deleteUser } from "../api/users";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "./Button";
+import { RiDeleteBinFill } from "@remixicon/react";
 
 function ButtonDeleteUser() {
   const { id } = useParams();
@@ -20,8 +21,12 @@ function ButtonDeleteUser() {
   };
 
   return (
-    <Button onClick={onDelete} className="  rounded px-4 py-2 ">
-      Supprimer l'utilisateur
+    <Button
+      onClick={onDelete}
+      className="rounded px-4 py-2 bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
+      title="Supprimer l'utilisateur"
+    >
+      <RiDeleteBinFill /> Supprimer
     </Button>
   );
 }

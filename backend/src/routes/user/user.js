@@ -6,19 +6,21 @@ const router = express.Router();
 
 router.get("/", authenticateToken, async (req, res) => {
   try {
-    const [users] = await db
+    const [rows] = await db
       .promise()
       .query(
         "SELECT id, email, password, name, firstname, created_at FROM user WHERE id = ?",
         [req.user.id]
       );
-    if (users.length === 0) {
-      return res.status(404).json({ msg: "Notfound" });
+
+    if (rows.length === 0) {
+      return res.status(404).json({ msg: "Not found" });
     }
-    res.json(users[0]);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internalservererror" });
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Internal server error" });
   }
 });
 
@@ -27,10 +29,11 @@ router.get("/todos", authenticateToken, async (req, res) => {
     const [todos] = await db
       .promise()
       .query("SELECT * FROM todo WHERE user_id = ?", [req.user.id]);
+
     res.json(todos);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Internalservererror" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Internal server error" });
   }
 });
 

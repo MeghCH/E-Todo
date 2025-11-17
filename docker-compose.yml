@@ -1,38 +1,47 @@
 version: '3.8'
 
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./e-todo.sql:/docker-entrypoint-initdb.d/e-todo.sql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
   backend:
     build: ./backend
     ports:
-      - "${PORT}:${PORT}"
+      - "4000:4000"
     environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - PORT=${PORT}
-      - SECRET=${SECRET}
+      - PORT=4000
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=etodo
     depends_on:
-      db:
-        condition: service_healthy
+      - db
+    networks:
+      - app-network
+
   frontend:
     build: ./front-end
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_BASE_URL=http://backend:${PORT}
+      - VITE_API_URL=http://localhost:4000
     depends_on:
       - backend
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=etodo
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./e-todo.sql:/docker-entrypoint-initdb.d/e-todo.sql
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:

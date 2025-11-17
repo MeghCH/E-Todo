@@ -4,7 +4,7 @@ import { Button } from "./Button";
 import { startTimer, stopTimer, getTimeHistory } from "../api/timer";
 
 function formatDuration(ms) {
-  const totalSeconds = Math.floor(ms / 1000);
+  const totalSeconds = Math.floor((ms || 0) / 1000);
   const h = Math.floor(totalSeconds / 3600);
   const m = Math.floor((totalSeconds % 3600) / 60);
   const s = totalSeconds % 60;
@@ -42,7 +42,7 @@ function TimeTracker() {
 
   useEffect(() => {
     let interval;
-    if (isRunning) {
+    if (isRunning && startTime != null) {
       interval = setInterval(
         () => setElapsedTime(Date.now() - startTime),
         1000
@@ -57,11 +57,11 @@ function TimeTracker() {
     setStartTime(now - elapsedTime);
 
     try {
-      const res = await startTimer(note.trim() || null);
+      const res = await startTimer({ note: note.trim() || null });
 
-      if (res?.startedAt) {
-        setStartTime(new Date(res.startedAt).getTime());
-        setElapsedTime(Date.now() - new Date(res.startedAt).getTime());
+      if (res?.start) {
+        setStartTime(res.start);
+        setElapsedTime(Date.now() - res.start);
       }
     } catch {}
   };
@@ -71,30 +71,12 @@ function TimeTracker() {
       setIsRunning(false);
       return;
     }
-    const end = Date.now();
-    const duration = end - startTime;
-
-    const sessions = loadSessions();
-    const localSession = {
-      id:
-        crypto.randomUUID?.() ||
-        `${end}-${Math.random().toString(36).slice(2)}`,
-      start: startTime,
-      end,
-      durationMs: duration,
-      note: note.trim() || null,
-    };
-    saveSessions([...sessions, localSession]);
-
     setIsRunning(false);
 
     try {
-      const saved = await stopTimer();
-
-      const updated = loadSessions().map((s) =>
-        s.id === localSession.id ? saved : s
-      );
-      saveSessions(updated);
+      await stopTimer();
+      const server = await getTimeHistory();
+      saveSessions(server);
     } catch {}
   };
 
@@ -113,7 +95,7 @@ function TimeTracker() {
 
         <TextInput
           value={note}
-          onChange={setNote}
+          onChange={(e) => setNote(e.target.value)}
           placeholder="Note / Tâche / Projet"
           className="flex-1"
         />
