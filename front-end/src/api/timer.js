@@ -127,7 +127,6 @@ export async function getAllTimeHistories() {
   });
 
   if (!res.ok) {
-    // handleAuthFailure(res.status);
     return readError(res, "Erreur récupération historique complet");
   }
 
