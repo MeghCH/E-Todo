@@ -11,15 +11,17 @@ export default function ButtonDeco() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
 
+    window.dispatchEvent(new Event("auth-changed"));
+
     navigate("/login", { replace: true });
   };
 
   return (
     <Button
       onClick={handleLogout}
-      className="rounded px-4 py-2 hover transition"
+      className="rounded px-4 py-2 hover transition bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
     >
-      Se déconnecter
+      Déconnexion
     </Button>
   );
 }

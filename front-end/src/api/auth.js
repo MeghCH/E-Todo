@@ -1,36 +1,59 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
+const JSON_HEADERS = { "Content-Type": "application/json" };
+
+async function readError(res, fallback) {
+  const txt = await res.text().catch(() => null);
+  try {
+    const json = txt ? JSON.parse(txt) : null;
+    throw new Error(json?.msg || fallback);
+  } catch {
+    throw new Error(txt || fallback);
+  }
+}
 
 export async function login(payload) {
-  try {
-    const res = await fetch(`${BASE_URL}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+  const res = await fetch(`${BASE_URL}/login`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify(payload),
+  });
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => null);
-      throw new Error(err?.message || "Impossible de se connecter.");
-    }
+  if (!res.ok) return readError(res, "Impossible de se connecter.");
 
-    const data = await res.json();
+  const data = await res.json();
 
-    if (data?.token) {
-      localStorage.setItem("access_token", data.token);
-    }
-
-    if (data?.user) {
-      localStorage.setItem("user", JSON.stringify(data.user));
-    }
-
-    return data;
-  } catch (error) {
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      throw new Error("Erreur de connexion réseau. Vérifiez votre connexion ou réessayez plus tard.");
-    }
-    if (error.code === 'ECONNRESET' || error.message.includes('reset')) {
-      throw new Error("Connexion réinitialisée. Veuillez réessayer.");
-    }
-    throw error;
+  if (data?.token) {
+    localStorage.setItem("access_token", data.token);
   }
+  if (data?.user) {
+    localStorage.setItem("user", JSON.stringify(data.user));
+  }
+
+  return data;
+}
+
+export async function register(payload) {
+  const res = await fetch(`${BASE_URL}/register`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) return readError(res, "Échec de l'inscription.");
+
+  const data = await res.json();
+
+  if (data?.token) {
+    localStorage.setItem("access_token", data.token);
+  }
+  if (data?.user) {
+    localStorage.setItem("user", JSON.stringify(data.user));
+  }
+
+  return data;
+}
+
+export function logout() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("user");
 }

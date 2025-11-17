@@ -1,5 +1,4 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
 
@@ -18,25 +17,22 @@ app.use(
     credentials: true,
   })
 );
-app.use(bodyParser.json());
 
-app.use("/", authRoutes);
-app.use("/api/auth", authRoutes);
+app.use(express.json());
 
-app.use("/", userRoutes);
-app.use("/", usersRoutes);
-app.use("/api", userRoutes);
-app.use("/api", usersRoutes);
+app.use(authRoutes);
 
-app.use("/", todoRoutes);
-app.use("/api", todoRoutes);
+app.use("/user", userRoutes);
 
-app.use("/", timerRoutes);
-app.use("/api", timerRoutes);
+app.use("/users", usersRoutes);
+
+app.use("/todos", todoRoutes);
+
+app.use("/timer", timerRoutes);
 
 app.use(notFound);
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
 });
