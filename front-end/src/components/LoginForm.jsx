@@ -41,7 +41,7 @@ export function LoginForm({ headline, onSubmit, loading, error }) {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full hover text-white font-semibold py-2 rounded-lg transition"
+        className="w-full hover font-semibold py-2 rounded-lg transition"
       >
         {loading ? "Connexion..." : "LOGIN"}
       </Button>

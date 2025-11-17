@@ -27,10 +27,10 @@ export default function UserInfo() {
 
       <div className="flex flex-col gap-2 text-sm">
         <p>
-          <strong>Prénom :</strong> {user.name ?? "—"}
+          <strong>Nom :</strong> {user.name ?? "—"}
         </p>
         <p>
-          <strong>Nom :</strong> {user.firstname ?? "—"}
+          <strong>Prénom :</strong> {user.firstname ?? "—"}
         </p>
         <p>
           <strong>Email :</strong> {user.email ?? "—"}

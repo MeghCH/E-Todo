@@ -78,15 +78,15 @@ export default function UserEdit() {
 
       <TextInput
         type="text"
-        value={user.firstname}
-        onChange={(e) => setUser({ ...user, firstname: e.target.value })}
+        value={user.name}
+        onChange={(e) => setUser({ ...user, name: e.target.value })}
         placeholder="Nom"
       />
 
       <TextInput
         type="text"
-        value={user.name}
-        onChange={(e) => setUser({ ...user, name: e.target.value })}
+        value={user.firstname}
+        onChange={(e) => setUser({ ...user, firstname: e.target.value })}
         placeholder="Prénom"
       />
 
