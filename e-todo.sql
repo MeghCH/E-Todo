@@ -28,3 +28,7 @@ CREATE TABLE IF NOT EXISTS timer_sessions (
     note TEXT,
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
+
+CREATE USER IF NOT EXISTS 'meghan'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON etodo.* TO 'meghan'@'%';
+FLUSH PRIVILEGES;
