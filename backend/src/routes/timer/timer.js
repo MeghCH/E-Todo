@@ -6,74 +6,120 @@ const router = express.Router();
 
 function serverError(res, err) {
   console.error(err);
-  return res.status(500).json({ msg: "Internalservererror" });
+  return res.status(500).json({ msg: "Internal server error" });
 }
+
+router.get("/", authenticateToken, async (req, res) => {
+  try {
+    const sessions = await prisma.timer_sessions.findMany({
+      where: { user_id: Number(req.user.id) },
+      select: {
+        id: true,
+        user_id: true,
+        start_time: true,
+        end_time: true,
+        duration: true,
+        note: true,
+      },
+      orderBy: { start_time: "desc" },
+    });
+
+    res.json(
+      sessions.map((s) => ({
+        id: s.id,
+        user_id: s.user_id,
+        start_time: s.start_time,
+        end_time: s.end_time,
+        duration: s.duration,
+        note: s.note,
+      }))
+    );
+  } catch (err) {
+    return serverError(res, err);
+  }
+});
 
 router.post("/start", authenticateToken, async (req, res) => {
   const { note } = req.body;
 
   try {
-    const session = await prisma.timerSession.create({
+    const session = await prisma.timer_sessions.create({
       data: {
-        userId: req.user.id,
-        startTime: new Date(),
+        user_id: Number(req.user.id),
+        start_time: new Date(),
         note: note || null,
+      },
+      select: {
+        id: true,
+        user_id: true,
+        start_time: true,
+        end_time: true,
+        duration: true,
+        note: true,
       },
     });
 
-    res.status(201).json(session);
-  } catch (error) {
-    return serverError(res, error);
+    res.status(201).json({
+      id: session.id,
+      user_id: session.user_id,
+      start_time: session.start_time,
+      end_time: session.end_time,
+      duration: session.duration,
+      note: session.note,
+    });
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
+// POST /timer/stop  → stoppe la dernière session en cours
 router.post("/stop", authenticateToken, async (req, res) => {
   try {
-    const session = await prisma.timerSession.findFirst({
+    const session = await prisma.timer_sessions.findFirst({
       where: {
-        userId: req.user.id,
-        endTime: null,
+        user_id: Number(req.user.id),
+        end_time: null,
       },
       orderBy: {
-        startTime: "desc",
+        start_time: "desc",
       },
     });
 
     if (!session) {
-      return res.status(400).json({ msg: "Nosessionactive" });
+      return res.status(400).json({ msg: "No session active" });
     }
 
     const endTime = new Date();
     const durationSeconds = Math.floor(
-      (endTime.getTime() - session.startTime.getTime()) / 1000
+      (endTime.getTime() - session.start_time.getTime()) / 1000
     );
 
-    const updatedSession = await prisma.timerSession.update({
+    const updated = await prisma.timer_sessions.update({
       where: { id: session.id },
       data: {
-        endTime,
+        end_time: endTime,
         duration: durationSeconds,
       },
-    });
-
-    res.json(updatedSession);
-  } catch (error) {
-    return serverError(res, error);
-  }
-});
-
-router.get("/", authenticateToken, async (req, res) => {
-  try {
-    const sessions = await prisma.timerSession.findMany({
-      where: { userId: req.user.id },
-      orderBy: {
-        startTime: "desc",
+      select: {
+        id: true,
+        user_id: true,
+        start_time: true,
+        end_time: true,
+        duration: true,
+        note: true,
       },
     });
 
-    res.json(sessions);
-  } catch (error) {
-    return serverError(res, error);
+    res.json({
+      id: updated.id,
+      user_id: updated.user_id,
+      start_time: updated.start_time,
+      end_time: updated.end_time,
+      duration: updated.duration,
+      note: updated.note,
+    });
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
@@ -81,32 +127,32 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await prisma.timerSession.deleteMany({
+    const result = await prisma.timer_sessions.deleteMany({
       where: {
         id: Number(id),
-        userId: req.user.id,
+        user_id: Number(req.user.id),
       },
     });
 
     if (result.count === 0) {
-      return res.status(404).json({ msg: "Notfound" });
+      return res.status(404).json({ msg: "Not found" });
     }
 
-    res.json({ msg: `Successfullydeletedrecordnumber:${id}` });
-  } catch (error) {
-    return serverError(res, error);
+    res.json({ msg: `Successfully deleted record number: ${id}` });
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
 router.delete("/", authenticateToken, async (req, res) => {
   try {
-    await prisma.timerSession.deleteMany({
-      where: { userId: req.user.id },
+    await prisma.timer_sessions.deleteMany({
+      where: { user_id: Number(req.user.id) },
     });
 
-    res.json({ msg: "Successfullydeletedallsessions" });
-  } catch (error) {
-    return serverError(res, error);
+    res.json({ msg: "Successfully deleted all sessions" });
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
@@ -116,7 +162,7 @@ router.get("/all", authenticateToken, async (req, res) => {
   }
 
   try {
-    const sessions = await prisma.timerSession.findMany({
+    const sessions = await prisma.timer_sessions.findMany({
       include: {
         user: {
           select: {
@@ -126,24 +172,24 @@ router.get("/all", authenticateToken, async (req, res) => {
         },
       },
       orderBy: {
-        startTime: "desc",
+        start_time: "desc",
       },
     });
 
-    const formatted = sessions.map((s) => ({
-      id: s.id,
-      user_id: s.userId,
-      start_time: s.startTime,
-      end_time: s.endTime,
-      duration: s.duration,
-      note: s.note,
-      name: s.user.name,
-      firstname: s.user.firstname,
-    }));
-
-    res.json(formatted);
-  } catch (error) {
-    return serverError(res, error);
+    res.json(
+      sessions.map((s) => ({
+        id: s.id,
+        user_id: s.user_id,
+        start_time: s.start_time,
+        end_time: s.end_time,
+        duration: s.duration,
+        note: s.note,
+        name: s.user.name,
+        firstname: s.user.firstname,
+      }))
+    );
+  } catch (err) {
+    return serverError(res, err);
   }
 });
 
