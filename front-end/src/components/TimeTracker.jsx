@@ -90,14 +90,14 @@ function TimeTracker() {
     <div className="flex flex-col items-start justify-start w-full gap-2">
       <h2 className="text-base text-neutral-500">Pointeuse</h2>
 
-      <div className="w-full flex gap-2 items-center">
+      <div className="w-full flex flex-wrap gap-2 items-start">
         <p className="text-lg font-mono p-3">{formatDuration(elapsedTime)}</p>
 
         <TextInput
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="Note / Tâche / Projet"
-          className="flex-1"
+          className="flex-1 min-w-[200px]"
         />
       </div>
 
