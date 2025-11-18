@@ -1,6 +1,6 @@
 const express = require("express");
-const db = require("../../config/db");
 const { authenticateToken } = require("../../middleware/auth");
+const prisma = require("../../../prisma/prismaClient");
 
 const router = express.Router();
 
@@ -13,18 +13,15 @@ router.post("/start", authenticateToken, async (req, res) => {
   const { note } = req.body;
 
   try {
-    const [result] = await db
-      .promise()
-      .query(
-        "INSERT INTO timer_sessions (user_id, start_time, note) VALUES (?, NOW(), ?)",
-        [req.user.id, note || null]
-      );
+    const session = await prisma.timerSession.create({
+      data: {
+        userId: req.user.id,
+        startTime: new Date(),
+        note: note || null,
+      },
+    });
 
-    const [session] = await db
-      .promise()
-      .query("SELECT * FROM timer_sessions WHERE id = ?", [result.insertId]);
-
-    res.status(201).json(session[0]);
+    res.status(201).json(session);
   } catch (error) {
     return serverError(res, error);
   }
@@ -32,31 +29,34 @@ router.post("/start", authenticateToken, async (req, res) => {
 
 router.post("/stop", authenticateToken, async (req, res) => {
   try {
-    const [activeSession] = await db
-      .promise()
-      .query(
-        "SELECT * FROM timer_sessions WHERE user_id = ? AND end_time IS NULL ORDER BY start_time DESC LIMIT 1",
-        [req.user.id]
-      );
+    const session = await prisma.timerSession.findFirst({
+      where: {
+        userId: req.user.id,
+        endTime: null,
+      },
+      orderBy: {
+        startTime: "desc",
+      },
+    });
 
-    if (activeSession.length === 0) {
+    if (!session) {
       return res.status(400).json({ msg: "Nosessionactive" });
     }
 
-    const session = activeSession[0];
+    const endTime = new Date();
+    const durationSeconds = Math.floor(
+      (endTime.getTime() - session.startTime.getTime()) / 1000
+    );
 
-    await db
-      .promise()
-      .query(
-        "UPDATE timer_sessions SET end_time = NOW(), duration = TIMESTAMPDIFF(SECOND, start_time, NOW()) WHERE id = ?",
-        [session.id]
-      );
+    const updatedSession = await prisma.timerSession.update({
+      where: { id: session.id },
+      data: {
+        endTime,
+        duration: durationSeconds,
+      },
+    });
 
-    const [updatedSession] = await db
-      .promise()
-      .query("SELECT * FROM timer_sessions WHERE id = ?", [session.id]);
-
-    res.json(updatedSession[0]);
+    res.json(updatedSession);
   } catch (error) {
     return serverError(res, error);
   }
@@ -64,12 +64,12 @@ router.post("/stop", authenticateToken, async (req, res) => {
 
 router.get("/", authenticateToken, async (req, res) => {
   try {
-    const [sessions] = await db
-      .promise()
-      .query(
-        "SELECT * FROM timer_sessions WHERE user_id = ? ORDER BY start_time DESC",
-        [req.user.id]
-      );
+    const sessions = await prisma.timerSession.findMany({
+      where: { userId: req.user.id },
+      orderBy: {
+        startTime: "desc",
+      },
+    });
 
     res.json(sessions);
   } catch (error) {
@@ -81,14 +81,14 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [result] = await db
-      .promise()
-      .query("DELETE FROM timer_sessions WHERE id = ? AND user_id = ?", [
-        id,
-        req.user.id,
-      ]);
+    const result = await prisma.timerSession.deleteMany({
+      where: {
+        id: Number(id),
+        userId: req.user.id,
+      },
+    });
 
-    if (result.affectedRows === 0) {
+    if (result.count === 0) {
       return res.status(404).json({ msg: "Notfound" });
     }
 
@@ -100,9 +100,9 @@ router.delete("/:id", authenticateToken, async (req, res) => {
 
 router.delete("/", authenticateToken, async (req, res) => {
   try {
-    await db
-      .promise()
-      .query("DELETE FROM timer_sessions WHERE user_id = ?", [req.user.id]);
+    await prisma.timerSession.deleteMany({
+      where: { userId: req.user.id },
+    });
 
     res.json({ msg: "Successfullydeletedallsessions" });
   } catch (error) {
@@ -116,14 +116,32 @@ router.get("/all", authenticateToken, async (req, res) => {
   }
 
   try {
-    const [sessions] = await db.promise().query(
-      `SELECT ts.*, u.name, u.firstname 
-         FROM timer_sessions ts 
-         JOIN user u ON ts.user_id = u.id 
-         ORDER BY ts.start_time DESC`
-    );
+    const sessions = await prisma.timerSession.findMany({
+      include: {
+        user: {
+          select: {
+            name: true,
+            firstname: true,
+          },
+        },
+      },
+      orderBy: {
+        startTime: "desc",
+      },
+    });
 
-    res.json(sessions);
+    const formatted = sessions.map((s) => ({
+      id: s.id,
+      user_id: s.userId,
+      start_time: s.startTime,
+      end_time: s.endTime,
+      duration: s.duration,
+      note: s.note,
+      name: s.user.name,
+      firstname: s.user.firstname,
+    }));
+
+    res.json(formatted);
   } catch (error) {
     return serverError(res, error);
   }
