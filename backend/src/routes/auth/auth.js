@@ -6,9 +6,15 @@ const db = require("../../config/db");
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { email, password, name, firstname } = req.body;
+  const { email, password, name, firstname, role } = req.body;
 
-  if (!email || !password || !name || !firstname) {
+  if (
+    !email ||
+    !password ||
+    !name ||
+    !firstname ||
+    !["employee", "manager"].includes(role)
+  ) {
     return res.status(400).json({ msg: "Bad parameter" });
   }
 
@@ -26,8 +32,8 @@ router.post("/register", async (req, res) => {
     const [result] = await db
       .promise()
       .query(
-        "INSERT INTO user (email, password, name, firstname) VALUES (?, ?, ?, ?)",
-        [email, hashed, name, firstname]
+        "INSERT INTO user (email, password, name, firstname, role) VALUES (?, ?, ?, ?, ?)",
+        [email, hashed, name, firstname, role]
       );
 
     const token = jwt.sign({ id: result.insertId, email }, process.env.SECRET, {
