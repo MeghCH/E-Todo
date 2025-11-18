@@ -214,18 +214,21 @@ export default function TodoList() {
         {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <label className="text-sm text-gray-500">Trier par :</label>
         <SelectArea
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="rounded-md px-3 py-1.5"
+          className="rounded-md px-3 py-1.5 w-full sm:w-auto"
         >
           <option value="manual">Manuel (Drag & Drop)</option>
           <option value="due_time">Date d'échéance</option>
           <option value="status">Statut</option>
         </SelectArea>
-        <Button onClick={handleAdd} className="px-4 py-2 self-end">
+        <Button
+          onClick={handleAdd}
+          className="px-4 py-2 w-full sm:w-auto sm:self-end"
+        >
           Ajouter
         </Button>
       </div>
