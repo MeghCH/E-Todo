@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../components/Button";
 import { TextInput } from "../components/TextInput";
 import { createEmployee } from "../api/users";
+import { SelectArea } from "../components/SelectArea";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function RegisterPage() {
     firstname: "",
     email: "",
     password: "",
+    role: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -28,7 +30,13 @@ export default function RegisterPage() {
     setError(null);
     setOk(null);
 
-    if (!form.email || !form.password || !form.firstname || !form.name) {
+    if (
+      !form.email ||
+      !form.password ||
+      !form.firstname ||
+      !form.name ||
+      !form.role
+    ) {
       setLoading(false);
       setError("Champs requis manquants.");
       return;
@@ -40,6 +48,7 @@ export default function RegisterPage() {
         firstname: form.firstname.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,
+        role: form.role,
       });
 
       setOk("Employé créé avec succès.");
@@ -78,6 +87,12 @@ export default function RegisterPage() {
             {...bind("password")}
             required
           />
+
+          <SelectArea {...bind("role")} required>
+            <option value="">- Sélectionner un rôle -</option>
+            <option value="employee">Employé</option>
+            <option value="manager">Manager</option>
+          </SelectArea>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
           {ok && <p className="text-green-600 text-sm">{ok}</p>}

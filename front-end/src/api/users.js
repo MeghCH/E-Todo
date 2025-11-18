@@ -46,6 +46,7 @@ export async function createEmployee(payload) {
       firstname: payload.firstname,
       email: payload.email,
       password: payload.password,
+      role: payload.role,
     }),
   });
   if (!res.ok) return readError(res, "Échec de création de l'employé.");
