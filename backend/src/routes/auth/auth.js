@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const db = require("../../config/db");
+const prisma = require("../../../prisma/prismaClient");
 
 const router = express.Router();
 
@@ -19,35 +19,41 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    const [existing] = await db
-      .promise()
-      .query("SELECT id FROM user WHERE email = ?", [email]);
+    const existing = await prisma.user.findUnique({
+      where: { email },
+    });
 
-    if (existing.length > 0) {
+    if (existing) {
       return res.status(409).json({ msg: "Account already exists" });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const [result] = await db
-      .promise()
-      .query(
-        "INSERT INTO user (email, password, name, firstname, role) VALUES (?, ?, ?, ?, ?)",
-        [email, hashed, name, firstname, role]
-      );
-
-    const token = jwt.sign({ id: result.insertId, email }, process.env.SECRET, {
-      expiresIn: "1h",
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+        firstname,
+        role,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        firstname: true,
+        role: true,
+        created_at: true,
+      },
     });
 
-    const [rows] = await db
-      .promise()
-      .query(
-        "SELECT id, email, name, firstname, role, created_at FROM user WHERE id = ?",
-        [result.insertId]
-      );
+    const token = jwt.sign(
+      { id: newUser.id, email: newUser.email, role: newUser.role },
+      process.env.SECRET,
+      { expiresIn: "1h" }
+    );
 
-    res.status(201).json({ token, user: rows[0] });
+    res.status(201).json({ token, user: newUser });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Internal server error" });
@@ -62,15 +68,14 @@ router.post("/login", async (req, res) => {
   }
 
   try {
-    const [users] = await db
-      .promise()
-      .query("SELECT * FROM user WHERE email = ?", [email]);
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
-    if (users.length === 0) {
+    if (!user) {
       return res.status(401).json({ msg: "Invalid Credentials" });
     }
 
-    const user = users[0];
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return res.status(401).json({ msg: "Invalid Credentials" });
@@ -82,14 +87,16 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    const [rows] = await db
-      .promise()
-      .query(
-        "SELECT id, email, name, firstname, role, created_at FROM user WHERE id = ?",
-        [user.id]
-      );
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      firstname: user.firstname,
+      role: user.role,
+      created_at: user.created_at,
+    };
 
-    res.json({ token, user: rows[0] });
+    res.json({ token, user: safeUser });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Internal server error" });
