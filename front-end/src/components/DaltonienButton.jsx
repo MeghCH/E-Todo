@@ -5,6 +5,7 @@ export default function DaltonienButton() {
   const [isActive, setIsActive] = useState(false);
 
   const handleChange = (newValue) => {
+    document.body.classList.toggle("daltonien", newValue);
     localStorage.setItem("daltonienMode", newValue ? "true" : "false");
     setIsActive(newValue);
   };
