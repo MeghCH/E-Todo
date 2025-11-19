@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS user (
     name VARCHAR(255) NOT NULL,
     firstname VARCHAR(255) NOT NULL,
     role VARCHAR(50) DEFAULT 'employee',
+    daltonien BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -29,7 +30,6 @@ CREATE TABLE IF NOT EXISTS timer_sessions (
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
--- Create user for MySQL Workbench access
 CREATE USER IF NOT EXISTS 'meghan'@'%' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON etodo.* TO 'meghan'@'%';
 FLUSH PRIVILEGES;
