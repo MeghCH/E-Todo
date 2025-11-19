@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/Button";
 import { TextInput } from "../components/TextInput";
+import { SelectArea } from "../components/SelectArea";
 import { createEmployee } from "../api/users";
 
 export default function RegisterPage() {
@@ -11,6 +12,7 @@ export default function RegisterPage() {
     firstname: "",
     email: "",
     password: "",
+    daltonien: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -40,6 +42,7 @@ export default function RegisterPage() {
         firstname: form.firstname.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,
+        daltonien: form.daltonien,
       });
 
       setOk("Employé créé avec succès.");
@@ -78,6 +81,16 @@ export default function RegisterPage() {
             {...bind("password")}
             required
           />
+
+          <label className="text-sm font-medium">Êtes-vous daltonien ?</label>
+          <SelectArea
+            value={form.daltonien}
+            onChange={(e) => setForm((f) => ({ ...f, daltonien: e.target.value === "true" }))}
+            placeholder="Daltonien"
+          >
+            <option value={false}>Non</option>
+            <option value={true}>Oui</option>
+          </SelectArea>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
           {ok && <p className="text-green-600 text-sm">{ok}</p>}
