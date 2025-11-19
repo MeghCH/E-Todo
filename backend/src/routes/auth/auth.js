@@ -6,7 +6,7 @@ const db = require("../../config/db");
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { email, password, name, firstname } = req.body;
+  const { email, password, name, firstname, daltonien } = req.body;
 
   if (!email || !password || !name || !firstname) {
     return res.status(400).json({ msg: "Bad parameter" });
@@ -26,8 +26,8 @@ router.post("/register", async (req, res) => {
     const [result] = await db
       .promise()
       .query(
-        "INSERT INTO user (email, password, name, firstname) VALUES (?, ?, ?, ?)",
-        [email, hashed, name, firstname]
+        "INSERT INTO user (email, password, name, firstname, daltonien) VALUES (?, ?, ?, ?, ?)",
+        [email, hashed, name, firstname, daltonien ? 1 : 0]
       );
 
     const token = jwt.sign({ id: result.insertId, email }, process.env.SECRET, {
@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
     const [rows] = await db
       .promise()
       .query(
-        "SELECT id, email, name, firstname, role, created_at FROM user WHERE id = ?",
+        "SELECT id, email, name, firstname, role, daltonien, created_at FROM user WHERE id = ?",
         [result.insertId]
       );
 
@@ -79,7 +79,7 @@ router.post("/login", async (req, res) => {
     const [rows] = await db
       .promise()
       .query(
-        "SELECT id, email, name, firstname, role, created_at FROM user WHERE id = ?",
+        "SELECT id, email, name, firstname, role, daltonien, created_at FROM user WHERE id = ?",
         [user.id]
       );
 
