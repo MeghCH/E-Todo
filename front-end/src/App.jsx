@@ -4,6 +4,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { EmployeHomePage } from "./pages/EmployeHomePage";
 import RegisterPage from "./pages/RegisterPage";
 import ThemeToggle from "./components/ThemeToggle";
+import DaltonienButton from "./components/DaltonienButton";
 import ColorSwitch from "./components/ColorSwitch";
 import RegisterButton from "./components/RegisterButton";
 import WeatherWidget from "./components/WeatherWidget";
@@ -72,6 +73,7 @@ function Layout() {
     <div className="font-inter bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white w-full h-screen overflow-auto lg:overflow-hidden">
       <div className="fixed top-2 right-2 flex gap-1">
         <ThemeToggle />
+        {me?.daltonien && <DaltonienButton />}
         <ColorSwitch className="hidden sm:flex" />
         <ButtonDeco />
       </div>
