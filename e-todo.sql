@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS user (
     password VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     firstname VARCHAR(255) NOT NULL,
-    role ENUM('employee', 'manager'),
+    role ENUM('employe', 'manager'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
