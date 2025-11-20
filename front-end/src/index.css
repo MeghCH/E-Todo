@@ -9,3 +9,7 @@
   --color-secondary: var(--secondary);
   --font-inter: "Inter", sans-serif;
 }
+
+.daltonien {
+  filter: grayscale(100%);
+}
