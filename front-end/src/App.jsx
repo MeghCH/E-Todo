@@ -20,6 +20,8 @@ import ButtonDaltonien from "./components/ButtonDaltonien";
 function Layout() {
   const location = useLocation();
 
+  const isLoginPage = location.pathname === "/login";
+
   const readUserFromStorage = () => {
     try {
       return JSON.parse(localStorage.getItem("user") || "null");
@@ -75,12 +77,12 @@ function Layout() {
         <ThemeToggle />
         <ButtonDaltonien />
         <ColorSwitch className="hidden sm:flex" />
-        <ButtonDeco />
+        {!isLoginPage && <ButtonDeco />}
       </div>
 
       <div className="fixed top-2 left-2 flex gap-1">
-        <ButtonHome />
-        <ButtonUserInfo />
+        {!isLoginPage && <ButtonHome />}
+        {!isLoginPage && <ButtonUserInfo />}
         {isManager && <RegisterButton />}
         <div className="hidden lg:block">
           <WeatherWidget />
@@ -119,7 +121,16 @@ function Layout() {
           />
 
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/register"
+            element={
+              <PrivateRoutes>
+                <ManagerRoutes>
+                  <RegisterPage />
+                </ManagerRoutes>
+              </PrivateRoutes>
+            }
+          />
         </Routes>
       </div>
     </div>

@@ -13,7 +13,7 @@ router.post("/register", async (req, res) => {
     !password ||
     !name ||
     !firstname ||
-    !["employee", "manager"].includes(role)
+    !["employe", "manager"].includes(role)
   ) {
     return res.status(400).json({ msg: "Bad parameter" });
   }
@@ -37,6 +37,7 @@ router.post("/register", async (req, res) => {
         firstname,
         role,
       },
+
       select: {
         id: true,
         email: true,

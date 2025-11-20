@@ -90,7 +90,7 @@ export default function RegisterPage() {
 
           <SelectArea {...bind("role")} required>
             <option value="">- Sélectionner un rôle -</option>
-            <option value="employee">Employé</option>
+            <option value="employe">Employé</option>
             <option value="manager">Manager</option>
           </SelectArea>
 
