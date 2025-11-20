@@ -15,6 +15,7 @@ import PrivateRoutes from "./components/PrivateRoutes";
 import ManagerRoutes from "./components/ManagerRoutes";
 import { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "./api/users";
+import ButtonDaltonien from "./components/ButtonDaltonien";
 
 function Layout() {
   const location = useLocation();
@@ -72,6 +73,7 @@ function Layout() {
     <div className="font-inter bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white w-full h-screen overflow-auto lg:overflow-hidden">
       <div className="fixed top-2 right-2 flex gap-1">
         <ThemeToggle />
+        <ButtonDaltonien />
         <ColorSwitch className="hidden sm:flex" />
         <ButtonDeco />
       </div>
