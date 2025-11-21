@@ -1,6 +1,7 @@
 import { Button } from "./Button";
 import { SelectArea } from "./SelectArea";
 import { RiDeleteBinFill } from "@remixicon/react";
+import { useTranslation } from "react-i18next";
 
 function formatDate(isoLike) {
   if (!isoLike) return "";
@@ -11,13 +12,6 @@ function formatDate(isoLike) {
     return isoLike;
   }
 }
-
-const STATUS_LABELS = {
-  not_started: "Non démarré",
-  todo: "À faire",
-  in_progress: "En cours",
-  done: "Terminé",
-};
 
 function statusStyle(status) {
   switch (status) {
@@ -33,6 +27,8 @@ function statusStyle(status) {
 }
 
 function TodoItem({ task, deleteTask, updateStatus }) {
+  const { t } = useTranslation();
+
   const overdue =
     task.due_time &&
     task.status !== "done" &&
@@ -47,13 +43,15 @@ function TodoItem({ task, deleteTask, updateStatus }) {
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap gap-2 items-center">
           <span className="font-semibold">{task.title}</span>
+
           <span
             className={`px-2 py-0.5 rounded-lg border ${statusStyle(
               task.status
             )}`}
           >
-            {STATUS_LABELS[task.status]}
+            {t(`todo.status.${task.status}`)}
           </span>
+
           <span
             className={`px-2 py-0.5 rounded-lg ${
               overdue
@@ -61,7 +59,7 @@ function TodoItem({ task, deleteTask, updateStatus }) {
                 : "bg-neutral-100 dark:bg-neutral-700"
             }`}
           >
-            Échéance : {formatDate(task.due_time)}
+            {t("todoItem.dueTime")} : {formatDate(task.due_time)}
           </span>
         </div>
 
@@ -70,7 +68,7 @@ function TodoItem({ task, deleteTask, updateStatus }) {
         </p>
 
         <div className="mt-2 text-xs text-gray-500">
-          Créée : {formatDate(task.created_at)}
+          {t("todoItem.createdAt")} : {formatDate(task.created_at)}
         </div>
       </div>
 
@@ -80,9 +78,9 @@ function TodoItem({ task, deleteTask, updateStatus }) {
           onChange={(e) => updateStatus(task.id, e.target.value)}
           className="rounded-md px-2 py-1 text-sm bg-neutral-300 dark:bg-neutral-700"
         >
-          {Object.entries(STATUS_LABELS).map(([value, label]) => (
+          {["not_started", "todo", "in_progress", "done"].map((value) => (
             <option key={value} value={value}>
-              {label}
+              {t(`todo.status.${value}`)}
             </option>
           ))}
         </SelectArea>
@@ -90,7 +88,8 @@ function TodoItem({ task, deleteTask, updateStatus }) {
         <Button
           onClick={deleteTask}
           className="size-6 p-0 bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
-          title="Supprimer"
+          title={t("todoItem.delete")}
+          aria-label={t("todoItem.delete")}
         >
           <RiDeleteBinFill size={14} />
         </Button>

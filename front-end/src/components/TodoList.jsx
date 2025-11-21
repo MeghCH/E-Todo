@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import TodoItem from "./TodoItem";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "./Button";
@@ -7,12 +8,7 @@ import { SelectArea } from "./SelectArea";
 
 import { listTodos, createTodo, deleteTodo, updateTodo } from "../api/todos";
 
-const STATUSES = [
-  { value: "not_started", label: "Non démarré" },
-  { value: "todo", label: "À faire" },
-  { value: "in_progress", label: "En cours" },
-  { value: "done", label: "Terminé" },
-];
+const STATUSES = ["not_started", "todo", "in_progress", "done"];
 
 const STATUS_TO_DB = {
   not_started: "not started",
@@ -34,6 +30,8 @@ const cmpDate = (a, b) => (a || "").localeCompare(b || "");
 const getValue = (v) => (typeof v === "string" ? v : v?.target?.value ?? "");
 
 export default function TodoList() {
+  const { t } = useTranslation();
+
   const [todos, setTodos] = useState([]);
 
   const [title, setTitle] = useState("");
@@ -43,7 +41,7 @@ export default function TodoList() {
   const [status, setStatus] = useState("not_started");
 
   const [sortBy, setSortBy] = useState("manual");
-  const [error, setError] = useState("");
+  const [errorKey, setErrorKey] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -63,24 +61,22 @@ export default function TodoList() {
   }, []);
 
   const handleAdd = async () => {
-    setError("");
+    setErrorKey(null);
 
     if (!title.trim() || !description.trim() || !createdAt || !dueTime) {
-      setError("Tous les champs sont obligatoires.");
+      setErrorKey("todo.errors.required");
       return;
     }
     if (!isValidDate(createdAt)) {
-      setError("La date de création est invalide (AAAA-MM-JJ).");
+      setErrorKey("todo.errors.createdAt");
       return;
     }
     if (!isValidDate(dueTime)) {
-      setError("La date d'échéance est invalide (AAAA-MM-JJ).");
+      setErrorKey("todo.errors.dueTime");
       return;
     }
     if (cmpDate(dueTime, createdAt) < 0) {
-      setError(
-        "La date d'échéance doit être postérieure ou égale à la date de création."
-      );
+      setErrorKey("todo.errors.dueBeforeCreate");
       return;
     }
 
@@ -108,7 +104,7 @@ export default function TodoList() {
       setStatus("not_started");
     } catch (e) {
       console.error(e);
-      setError("Erreur lors de la création.");
+      setErrorKey("todo.errors.create");
     }
   };
 
@@ -160,7 +156,7 @@ export default function TodoList() {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <h2 className="text-base text-neutral-500">Todo List</h2>
+      <h2 className="text-base text-neutral-500">{t("todo.title")}</h2>
 
       <div className="bg-neutral-200 dark:bg-neutral-900 p-1 rounded-lg">
         <div className="flex flex-col md:flex-row gap-3">
@@ -168,14 +164,14 @@ export default function TodoList() {
             <TextInput
               value={title}
               onChange={(v) => setTitle(getValue(v))}
-              placeholder="Titre"
+              placeholder={t("todo.fields.title")}
               className="rounded-md px-3 py-2"
             />
 
             <TextInput
               value={description}
               onChange={(v) => setDescription(getValue(v))}
-              placeholder="Description"
+              placeholder={t("todo.fields.description")}
               className="rounded-md px-3 py-2 bg-white dark:bg-neutral-800 outline-none"
             />
 
@@ -185,7 +181,7 @@ export default function TodoList() {
                 value={createdAt}
                 onChange={(v) => setCreatedAt(getValue(v))}
                 className="rounded-md px-3 py-2 flex-1"
-                aria-label="Date de création"
+                aria-label={t("todo.fields.createdAt")}
               />
 
               <TextInput
@@ -193,7 +189,7 @@ export default function TodoList() {
                 value={dueTime}
                 onChange={(v) => setDueTime(getValue(v))}
                 className="rounded-md px-3 py-2 flex-1"
-                aria-label="Date d'échéance"
+                aria-label={t("todo.fields.dueTime")}
               />
 
               <SelectArea
@@ -202,8 +198,8 @@ export default function TodoList() {
                 className="rounded-md px-3 py-2 cursor-pointer"
               >
                 {STATUSES.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
+                  <option key={s} value={s}>
+                    {t(`todo.status.${s}`)}
                   </option>
                 ))}
               </SelectArea>
@@ -211,25 +207,25 @@ export default function TodoList() {
           </div>
         </div>
 
-        {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+        {errorKey && <p className="text-red-600 text-sm mt-2">{t(errorKey)}</p>}
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <label className="text-sm text-gray-500">Trier par :</label>
+        <label className="text-sm text-gray-500">{t("todo.sortLabel")}</label>
         <SelectArea
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           className="rounded-md px-3 py-1.5 w-full sm:w-auto"
         >
-          <option value="manual">Manuel (Drag & Drop)</option>
-          <option value="due_time">Date d'échéance</option>
-          <option value="status">Statut</option>
+          <option value="manual">{t("todo.sort.manual")}</option>
+          <option value="due_time">{t("todo.sort.due_time")}</option>
+          <option value="status">{t("todo.sort.status")}</option>
         </SelectArea>
         <Button
           onClick={handleAdd}
           className="px-4 py-2 w-full sm:w-auto sm:self-end"
         >
-          Ajouter
+          {t("todo.add")}
         </Button>
       </div>
 

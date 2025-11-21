@@ -1,0 +1,164 @@
+{
+  "common": {
+    "loading": "Chargement…",
+    "dash": "—"
+  },
+  "userInfo": {
+    "title": "Mes informations",
+    "name": "Nom :",
+    "firstname": "Prénom :",
+    "email": "Email :",
+    "id": "ID :",
+    "error": "Impossible de récupérer vos informations."
+  },
+
+  "userEdit": {
+    "loading": "Chargement…",
+    "loadError": "Erreur lors du chargement du profil",
+    "title": "Modifier mon profil",
+    "namePlaceholder": "Nom",
+    "firstnamePlaceholder": "Prénom",
+    "newPasswordPlaceholder": "Nouveau mot de passe (optionnel)",
+    "emailPlaceholder": "Email",
+    "currentPasswordPlaceholder": "Mot de passe actuel (obligatoire)",
+    "mustEnterCurrentPassword": "Veuillez entrer votre mot de passe actuel pour modifier vos informations.",
+    "updateSuccess": "Profil mis à jour !",
+    "updateError": "Erreur lors de la mise à jour : mot de passe incorrect ?",
+    "submit": "Mettre à jour",
+    "deleteAccount": "Supprimer mon compte"
+  },
+
+  "todo": {
+    "title": "Todo List",
+    "fields": {
+      "title": "Titre",
+      "description": "Description",
+      "createdAt": "Date de création",
+      "dueTime": "Date d'échéance"
+    },
+    "status": {
+      "not_started": "Non démarré",
+      "todo": "À faire",
+      "in_progress": "En cours",
+      "done": "Terminé"
+    },
+    "sortLabel": "Trier par :",
+    "sort": {
+      "manual": "Manuel (Drag & Drop)",
+      "due_time": "Date d'échéance",
+      "status": "Statut"
+    },
+    "add": "Ajouter",
+    "errors": {
+      "required": "Tous les champs sont obligatoires.",
+      "createdAt": "La date de création est invalide (AAAA-MM-JJ).",
+      "dueTime": "La date d'échéance est invalide (AAAA-MM-JJ).",
+      "dueBeforeCreate": "La date d'échéance doit être postérieure ou égale à la date de création.",
+      "create": "Erreur lors de la création."
+    }
+  },
+
+  "todoItem": {
+    "createdAt": "Créée le",
+    "dueTime": "Échéance",
+    "delete": "Supprimer"
+  },
+
+  "timeTracker": {
+    "title": "Pointeuse",
+    "placeholder": "Note / Tâche / Projet",
+    "start": "Commencer",
+    "stop": "Enregistrer",
+    "reset": "Réinitialiser"
+  },
+
+  "timeHistoryMana": {
+    "loading": "Chargement…",
+    "noData": "Aucune session trouvée.",
+    "title": "Historique des employés",
+    "employee": "Employé",
+    "unknown": "inconnu",
+    "start": "Début",
+    "end": "Fin",
+    "duration": "Durée",
+    "note": "Note",
+    "none": "—"
+  },
+
+  "timeHistory": {
+    "title": "Historique",
+    "sync": "· sync…",
+    "total": "Total",
+    "noSessions": "Aucune session enregistrée pour le moment.",
+    "delete": "Supprimer",
+    "confirmClear": "Tout supprimer ?",
+    "clear": "Vider",
+    "export": "Export CSV",
+    "note": "Note",
+    "deleteServerError": "Suppression côté serveur impossible.",
+    "clearServerError": "Vidage côté serveur impossible.",
+    "start": "Début",
+    "end": "Fin",
+    "durationFull": "Durée (hh:mm:ss)",
+    "durationMs": "Durée (ms)"
+  },
+
+  "login": {
+    "title": "Connexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "loggingIn": "Connexion...",
+    "loginButton": "Se connecter"
+  },
+
+  "deleteUser": {
+    "confirm": "Supprimer définitivement cet utilisateur ?",
+    "error": "Suppression impossible.",
+    "button": "Supprimer",
+    "tooltip": "Supprimer l'utilisateur"
+  },
+
+  "logout": {
+    "confirm": "Voulez-vous vraiment vous déconnecter ?",
+    "button": "Déconnexion"
+  },
+
+  "daltonien": {
+    "title": "Mode daltonien",
+    "enable": "Activer le mode daltonien",
+    "disable": "Désactiver le mode daltonien"
+  },
+
+  "register": {
+    "title": "Créer un employé",
+    "name": "Nom",
+    "firstname": "Prénom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "selectRole": "- Sélectionner un rôle -",
+    "roles": {
+      "employe": "Employé",
+      "manager": "Manager"
+    },
+    "submit": "Créer",
+    "loading": "Création...",
+    "success": "Employé créé avec succès.",
+    "errors": {
+      "missingFields": "Champs requis manquants."
+    }
+  },
+
+  "loginPage": {
+    "title": "Connexion",
+    "errors": {
+      "missingToken": "Token manquant",
+      "missingUser": "Utilisateur manquant dans la réponse",
+      "default": "Erreur de connexion"
+    }
+  },
+
+  "weather": {
+    "loading": "Chargement...",
+    "city": "Strasbourg"
+  }
+}

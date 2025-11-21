@@ -16,6 +16,7 @@ import ManagerRoutes from "./components/ManagerRoutes";
 import { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "./api/users";
 import ButtonDaltonien from "./components/ButtonDaltonien";
+import LanguageSwitcher from "./components/LanguageSwitcher";
 
 function Layout() {
   const location = useLocation();
@@ -76,7 +77,8 @@ function Layout() {
       <div className="fixed top-2 right-2 flex gap-1">
         <ThemeToggle />
         <ButtonDaltonien />
-        <ColorSwitch className="hidden sm:flex" />
+        <LanguageSwitcher />
+        <ColorSwitch className="flex [@media(max-width:750px)]:hidden" />
         {!isLoginPage && <ButtonDeco />}
       </div>
 

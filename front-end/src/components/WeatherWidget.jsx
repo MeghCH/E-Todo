@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function WeatherWidget() {
+  const { t, i18n } = useTranslation();
   const [temp, setTemp] = useState(null);
   const [desc, setDesc] = useState("");
   const [loading, setLoading] = useState(true);
@@ -18,7 +20,7 @@ export default function WeatherWidget() {
       .finally(() => setLoading(false));
   }, []);
 
-  const date = new Date().toLocaleDateString("fr-FR", {
+  const date = new Date().toLocaleDateString(i18n.language, {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -40,10 +42,10 @@ export default function WeatherWidget() {
   return (
     <div className="bg-neutral-200 dark:bg-neutral-900 rounded-md h-12 flex gap-2 px-4 text-base">
       {loading ? (
-        <div>Chargement...</div>
+        <div>{t("weather.loading")}</div>
       ) : (
         <div className="flex items-center justify-between gap-3">
-          <div className="text-sm opacity-25">Strasbourg</div>
+          <div className="text-sm opacity-25">{t("weather.city")}</div>
           <div className="opacity-50">
             {weatherIcon} {temp}°C
           </div>

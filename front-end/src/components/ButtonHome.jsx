@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "./Button";
+import { RiHome3Line } from "@remixicon/react";
 
 export default function ButtonHome() {
   const navigate = useNavigate();
@@ -25,9 +26,9 @@ export default function ButtonHome() {
   return (
     <Button
       onClick={goHome}
-      className="bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white cursor-pointer"
+      className="px-3 bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white cursor-pointer"
     >
-      Home
+      <RiHome3Line size={24} />
     </Button>
   );
 }

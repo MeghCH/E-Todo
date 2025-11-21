@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Button } from "./Button";
 import { TextInput } from "./TextInput";
+import { useTranslation } from "react-i18next";
 
 export function LoginForm({ headline, onSubmit, loading, error }) {
+  const { t } = useTranslation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,7 +26,7 @@ export function LoginForm({ headline, onSubmit, loading, error }) {
         className="w-full"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
+        placeholder={t("login.email")}
         required
       />
 
@@ -32,7 +35,7 @@ export function LoginForm({ headline, onSubmit, loading, error }) {
         className="w-full"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
+        placeholder={t("login.password")}
         required
       />
 
@@ -43,7 +46,7 @@ export function LoginForm({ headline, onSubmit, loading, error }) {
         disabled={loading}
         className="w-full hover font-semibold py-2 rounded-lg transition"
       >
-        {loading ? "Connexion..." : "LOGIN"}
+        {loading ? t("login.loggingIn") : t("login.loginButton")}
       </Button>
     </form>
   );
