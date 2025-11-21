@@ -1,0 +1,164 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "dash": "—"
+  },
+  "userInfo": {
+    "title": "My information",
+    "name": "Last name:",
+    "firstname": "First name:",
+    "email": "Email:",
+    "id": "ID:",
+    "error": "Unable to fetch your information."
+  },
+
+  "userEdit": {
+    "loading": "Loading…",
+    "loadError": "Error while loading profile",
+    "title": "Edit my profile",
+    "namePlaceholder": "Last name",
+    "firstnamePlaceholder": "First name",
+    "newPasswordPlaceholder": "New password (optional)",
+    "emailPlaceholder": "Email",
+    "currentPasswordPlaceholder": "Current password (required)",
+    "mustEnterCurrentPassword": "Please enter your current password to update your information.",
+    "updateSuccess": "Profile updated!",
+    "updateError": "Error while updating: incorrect password?",
+    "submit": "Update",
+    "deleteAccount": "Delete my account"
+  },
+
+  "todo": {
+    "title": "Todo List",
+    "fields": {
+      "title": "Title",
+      "description": "Description",
+      "createdAt": "Creation date",
+      "dueTime": "Due date"
+    },
+    "status": {
+      "not_started": "Not started",
+      "todo": "To do",
+      "in_progress": "In progress",
+      "done": "Done"
+    },
+    "sortLabel": "Sort by:",
+    "sort": {
+      "manual": "Manual (Drag & Drop)",
+      "due_time": "Due date",
+      "status": "Status"
+    },
+    "add": "Add",
+    "errors": {
+      "required": "All fields are required.",
+      "createdAt": "Invalid creation date (YYYY-MM-DD).",
+      "dueTime": "Invalid due date (YYYY-MM-DD).",
+      "dueBeforeCreate": "Due date must be later than or equal to creation date.",
+      "create": "Error during creation."
+    }
+  },
+
+  "todoItem": {
+    "createdAt": "Created on",
+    "dueTime": "Due date",
+    "delete": "Delete"
+  },
+
+  "timeTracker": {
+    "title": "Time tracker",
+    "placeholder": "Note / Task / Project",
+    "start": "Start",
+    "stop": "Save",
+    "reset": "Reset"
+  },
+
+  "timeHistoryMana": {
+    "loading": "Loading…",
+    "noData": "No sessions found.",
+    "title": "Employees' History",
+    "employee": "Employee",
+    "unknown": "unknown",
+    "start": "Start",
+    "end": "End",
+    "duration": "Duration",
+    "note": "Note",
+    "none": "—"
+  },
+
+  "timeHistory": {
+    "title": "History",
+    "sync": "· syncing…",
+    "total": "Total",
+    "noSessions": "No sessions recorded yet.",
+    "delete": "Delete",
+    "confirmClear": "Delete all sessions?",
+    "clear": "Clear",
+    "export": "Export CSV",
+    "note": "Note",
+    "deleteServerError": "Server deletion failed.",
+    "clearServerError": "Server clear failed.",
+    "start": "Start",
+    "end": "End",
+    "durationFull": "Duration (hh:mm:ss)",
+    "durationMs": "Duration (ms)"
+  },
+
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "loggingIn": "Logging in...",
+    "loginButton": "Login"
+  },
+
+  "deleteUser": {
+    "confirm": "Permanently delete this user?",
+    "error": "Deletion failed.",
+    "button": "Delete",
+    "tooltip": "Delete user"
+  },
+
+  "logout": {
+    "confirm": "Are you sure you want to log out?",
+    "button": "Logout"
+  },
+
+  "daltonien": {
+    "title": "Colorblind mode",
+    "enable": "Enable colorblind mode",
+    "disable": "Disable colorblind mode"
+  },
+
+  "register": {
+    "title": "Create an employee",
+    "name": "Last name",
+    "firstname": "First name",
+    "email": "Email",
+    "password": "Password",
+    "selectRole": "- Select a role -",
+    "roles": {
+      "employe": "Employee",
+      "manager": "Manager"
+    },
+    "submit": "Create",
+    "loading": "Creating...",
+    "success": "Employee successfully created.",
+    "errors": {
+      "missingFields": "Required fields are missing."
+    }
+  },
+
+  "loginPage": {
+    "title": "Login",
+    "errors": {
+      "missingToken": "Missing token",
+      "missingUser": "Missing user in response",
+      "default": "Login error"
+    }
+  },
+
+  "weather": {
+    "loading": "Loading...",
+    "city": "Strasbourg"
+  }
+}

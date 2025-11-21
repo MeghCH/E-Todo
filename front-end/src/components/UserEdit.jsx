@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getCurrentUser, updateUser } from "../api/users";
 import { Button } from "./Button";
 import { TextInput } from "./TextInput";
 import ButtonDeleteUser from "./ButtonDeleteUser";
 
 export default function UserEdit() {
+  const { t } = useTranslation();
   const [user, setUser] = useState(null);
-  const [msg, setMsg] = useState("");
+  const [msgKey, setMsgKey] = useState(null);
+  const [msgType, setMsgType] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [newPassword, setNewPassword] = useState("");
@@ -16,7 +19,6 @@ export default function UserEdit() {
     (async () => {
       try {
         const data = await getCurrentUser();
-
         setUser({
           id: data.id,
           firstname: data.firstname,
@@ -24,7 +26,8 @@ export default function UserEdit() {
           email: data.email,
         });
       } catch {
-        setMsg("Erreur lors du chargement du profil");
+        setMsgKey("userEdit.loadError");
+        setMsgType("error");
       } finally {
         setLoading(false);
       }
@@ -33,12 +36,12 @@ export default function UserEdit() {
 
   const handleUpdate = async () => {
     if (!user?.id) return;
-    setMsg("");
+    setMsgKey(null);
+    setMsgType(null);
 
     if (!currentPassword.trim()) {
-      setMsg(
-        "Veuillez entrer votre mot de passe actuel pour modifier vos informations."
-      );
+      setMsgKey("userEdit.mustEnterCurrentPassword");
+      setMsgType("error");
       return;
     }
 
@@ -60,70 +63,72 @@ export default function UserEdit() {
       setNewPassword("");
       setCurrentPassword("");
       localStorage.setItem("user", JSON.stringify(updated));
-      setMsg("Profil mis à jour !");
+      setMsgKey("userEdit.updateSuccess");
+      setMsgType("success");
     } catch (err) {
       console.error(err);
-      setMsg("Erreur lors de la mise à jour : mot de passe incorrect ?");
+      setMsgKey("userEdit.updateError");
+      setMsgType("error");
     }
   };
 
-  if (loading) return <p className="p-4">Chargement…</p>;
-  if (!user) return <p className="p-4 text-red-600">{msg}</p>;
+  if (loading) return <p className="p-4">{t("userEdit.loading")}</p>;
+  if (!user && msgKey) return <p className="p-4 text-red-600">{t(msgKey)}</p>;
 
   return (
     <div className="size-full max-w-md mx-auto p-6 flex flex-col gap-3 bg-neutral-200 dark:bg-neutral-900 rounded-2xl shadow-md">
       <h2 className="text-xl font-semibold mb-2 text-center">
-        Modifier mon profil
+        {t("userEdit.title")}
       </h2>
 
       <TextInput
         type="text"
-        value={user.name}
+        value={user?.name ?? ""}
         onChange={(e) => setUser({ ...user, name: e.target.value })}
-        placeholder="Nom"
+        placeholder={t("userEdit.namePlaceholder")}
       />
 
       <TextInput
         type="text"
-        value={user.firstname}
+        value={user?.firstname ?? ""}
         onChange={(e) => setUser({ ...user, firstname: e.target.value })}
-        placeholder="Prénom"
+        placeholder={t("userEdit.firstnamePlaceholder")}
       />
 
       <TextInput
         type="password"
         value={newPassword}
         onChange={(e) => setNewPassword(e.target.value)}
-        placeholder="Nouveau mot de passe (optionnel)"
+        placeholder={t("userEdit.newPasswordPlaceholder")}
       />
 
       <TextInput
         type="email"
-        value={user.email}
+        value={user?.email ?? ""}
         onChange={(e) => setUser({ ...user, email: e.target.value })}
-        placeholder="Email"
+        placeholder={t("userEdit.emailPlaceholder")}
       />
 
       <TextInput
         type="password"
         value={currentPassword}
         onChange={(e) => setCurrentPassword(e.target.value)}
-        placeholder="Mot de passe actuel (obligatoire)"
+        placeholder={t("userEdit.currentPasswordPlaceholder")}
       />
 
       <Button onClick={handleUpdate} className="rounded px-4 py-2 mt-2">
-        Mettre à jour
+        {t("userEdit.submit")}
       </Button>
 
-      <ButtonDeleteUser>Supprimer mon compte</ButtonDeleteUser>
+      <ButtonDeleteUser>{t("userEdit.deleteAccount")}</ButtonDeleteUser>
 
-      {msg && (
+      {msgKey && (
         <p
           className={`mt-2 text-sm ${
-            msg.includes("Erreur") ? "text-red-500" : "text-green-600"
+            msgType === "error" ? "text-red-500" : "text-green-600"
           }`}
         >
-          {msg}
+          {t(msgKey)}
         </p>
       )}
     </div>

@@ -1,0 +1,164 @@
+{
+  "common": {
+    "loading": "Wird geladen…",
+    "dash": "—"
+  },
+  "userInfo": {
+    "title": "Meine Informationen",
+    "name": "Nachname:",
+    "firstname": "Vorname:",
+    "email": "E-Mail:",
+    "id": "ID:",
+    "error": "Ihre Informationen konnten nicht abgerufen werden."
+  },
+
+  "userEdit": {
+    "loading": "Wird geladen…",
+    "loadError": "Fehler beim Laden des Profils",
+    "title": "Mein Profil bearbeiten",
+    "namePlaceholder": "Nachname",
+    "firstnamePlaceholder": "Vorname",
+    "newPasswordPlaceholder": "Neues Passwort (optional)",
+    "emailPlaceholder": "E-Mail",
+    "currentPasswordPlaceholder": "Aktuelles Passwort (erforderlich)",
+    "mustEnterCurrentPassword": "Bitte geben Sie Ihr aktuelles Passwort ein, um Ihre Daten zu ändern.",
+    "updateSuccess": "Profil aktualisiert!",
+    "updateError": "Fehler bei der Aktualisierung: falsches Passwort?",
+    "submit": "Aktualisieren",
+    "deleteAccount": "Mein Konto löschen"
+  },
+
+  "todo": {
+    "title": "To-do-Liste",
+    "fields": {
+      "title": "Titel",
+      "description": "Beschreibung",
+      "createdAt": "Erstellungsdatum",
+      "dueTime": "Fälligkeitsdatum"
+    },
+    "status": {
+      "not_started": "Nicht begonnen",
+      "todo": "Zu erledigen",
+      "in_progress": "In Bearbeitung",
+      "done": "Erledigt"
+    },
+    "sortLabel": "Sortieren nach:",
+    "sort": {
+      "manual": "Manuell (Drag & Drop)",
+      "due_time": "Fälligkeitsdatum",
+      "status": "Status"
+    },
+    "add": "Hinzufügen",
+    "errors": {
+      "required": "Alle Felder sind erforderlich.",
+      "createdAt": "Ungültiges Erstellungsdatum (JJJJ-MM-TT).",
+      "dueTime": "Ungültiges Fälligkeitsdatum (JJJJ-MM-TT).",
+      "dueBeforeCreate": "Das Fälligkeitsdatum muss später oder gleich dem Erstellungsdatum sein.",
+      "create": "Fehler beim Erstellen."
+    }
+  },
+
+  "todoItem": {
+    "createdAt": "Erstellt am",
+    "dueTime": "Fälligkeitsdatum",
+    "delete": "Löschen"
+  },
+
+  "timeTracker": {
+    "title": "Zeiterfassung",
+    "placeholder": "Notiz / Aufgabe / Projekt",
+    "start": "Starten",
+    "stop": "Speichern",
+    "reset": "Zurücksetzen"
+  },
+
+  "timeHistoryMana": {
+    "loading": "Wird geladen…",
+    "noData": "Keine Sitzungen gefunden.",
+    "title": "Mitarbeiterhistorie",
+    "employee": "Mitarbeiter",
+    "unknown": "unbekannt",
+    "start": "Beginn",
+    "end": "Ende",
+    "duration": "Dauer",
+    "note": "Notiz",
+    "none": "—"
+  },
+
+  "timeHistory": {
+    "title": "Verlauf",
+    "sync": "· synchronisieren…",
+    "total": "Gesamt",
+    "noSessions": "Noch keine Sitzungen gespeichert.",
+    "delete": "Löschen",
+    "confirmClear": "Alles löschen?",
+    "clear": "Leeren",
+    "export": "CSV exportieren",
+    "note": "Notiz",
+    "deleteServerError": "Serverlöschung fehlgeschlagen.",
+    "clearServerError": "Serverbereinigung fehlgeschlagen.",
+    "start": "Start",
+    "end": "Ende",
+    "durationFull": "Dauer (hh:mm:ss)",
+    "durationMs": "Dauer (ms)"
+  },
+
+  "login": {
+    "title": "Anmeldung",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "loggingIn": "Anmelden...",
+    "loginButton": "Einloggen"
+  },
+
+  "deleteUser": {
+    "confirm": "Diesen Benutzer endgültig löschen?",
+    "error": "Löschen fehlgeschlagen.",
+    "button": "Löschen",
+    "tooltip": "Benutzer löschen"
+  },
+
+  "logout": {
+    "confirm": "Möchten Sie sich wirklich abmelden?",
+    "button": "Abmelden"
+  },
+
+  "daltonien": {
+    "title": "Farbenblind-Modus",
+    "enable": "Farbenblind-Modus aktivieren",
+    "disable": "Farbenblind-Modus deaktivieren"
+  },
+
+  "register": {
+    "title": "Mitarbeiter erstellen",
+    "name": "Nachname",
+    "firstname": "Vorname",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "selectRole": "- Rolle auswählen -",
+    "roles": {
+      "employe": "Mitarbeiter",
+      "manager": "Manager"
+    },
+    "submit": "Erstellen",
+    "loading": "Wird erstellt...",
+    "success": "Mitarbeiter erfolgreich erstellt.",
+    "errors": {
+      "missingFields": "Erforderliche Felder fehlen."
+    }
+  },
+
+  "loginPage": {
+    "title": "Anmeldung",
+    "errors": {
+      "missingToken": "Token fehlt",
+      "missingUser": "Benutzer fehlt in der Antwort",
+      "default": "Anmeldefehler"
+    }
+  },
+
+  "weather": {
+    "loading": "Wird geladen...",
+    "city": "Straßburg"
+  }
+}

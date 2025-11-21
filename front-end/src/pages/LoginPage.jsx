@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginForm } from "../components/LoginForm";
 import { login, logout } from "../api/auth";
+import { useTranslation } from "react-i18next";
 
 export function LoginPage() {
+  const { t } = useTranslation();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,12 +20,12 @@ export function LoginPage() {
       const data = await login({ email, password });
 
       if (!data?.token) {
-        throw new Error("Token manquant");
+        throw new Error(t("loginPage.errors.missingToken"));
       }
 
       const me = data.user;
       if (!me) {
-        throw new Error("Utilisateur manquant dans la réponse");
+        throw new Error(t("loginPage.errors.missingUser"));
       }
 
       localStorage.setItem("access_token", data.token);
@@ -43,7 +45,8 @@ export function LoginPage() {
       localStorage.removeItem("access_token");
       localStorage.removeItem("user");
       window.dispatchEvent(new Event("auth-changed"));
-      setError(e?.message || "Erreur de connexion");
+
+      setError(e?.message || t("loginPage.errors.default"));
     } finally {
       setLoading(false);
     }
@@ -52,7 +55,7 @@ export function LoginPage() {
   return (
     <div className="size-full flex flex-col items-center justify-center p-4">
       <LoginForm
-        headline="LOG IN"
+        headline={t("loginPage.title")}
         onSubmit={handleSubmit}
         loading={loading}
         error={error}

@@ -4,8 +4,10 @@ import { Button } from "../components/Button";
 import { TextInput } from "../components/TextInput";
 import { createEmployee } from "../api/users";
 import { SelectArea } from "../components/SelectArea";
+import { useTranslation } from "react-i18next";
 
 export default function RegisterPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
@@ -38,7 +40,7 @@ export default function RegisterPage() {
       !form.role
     ) {
       setLoading(false);
-      setError("Champs requis manquants.");
+      setError(t("register.errors.missingFields"));
       return;
     }
 
@@ -51,7 +53,7 @@ export default function RegisterPage() {
         role: form.role,
       });
 
-      setOk("Employé créé avec succès.");
+      setOk(t("register.success"));
       setTimeout(() => navigate("/home", { replace: true }), 800);
     } catch (e) {
       setError(e.message);
@@ -63,42 +65,47 @@ export default function RegisterPage() {
   return (
     <div className="h-full flex flex-col items-center justify-center bg-neutral-100 dark:bg-neutral-950">
       <div className="bg-neutral-200 dark:bg-neutral-900 rounded-2xl p-8 w-full max-w-md text-center">
-        <h1 className="text-3xl font-bold mb-4">Créer un employé</h1>
+        <h1 className="text-3xl font-bold mb-4">{t("register.title")}</h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <TextInput type="text" placeholder="Nom" {...bind("name")} required />
           <TextInput
             type="text"
-            placeholder="Prénom"
+            placeholder={t("register.name")}
+            {...bind("name")}
+            required
+          />
+          <TextInput
+            type="text"
+            placeholder={t("register.firstname")}
             {...bind("firstname")}
             required
           />
           <TextInput
             type="email"
-            placeholder="Email"
+            placeholder={t("register.email")}
             autoComplete="off"
             {...bind("email")}
             required
           />
           <TextInput
             type="password"
-            placeholder="Mot de passe"
+            placeholder={t("register.password")}
             autoComplete="new-password"
             {...bind("password")}
             required
           />
 
           <SelectArea {...bind("role")} required>
-            <option value="">- Sélectionner un rôle -</option>
-            <option value="employe">Employé</option>
-            <option value="manager">Manager</option>
+            <option value="">{t("register.selectRole")}</option>
+            <option value="employe">{t("register.roles.employe")}</option>
+            <option value="manager">{t("register.roles.manager")}</option>
           </SelectArea>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
           {ok && <p className="text-green-600 text-sm">{ok}</p>}
 
           <Button type="submit" disabled={loading}>
-            {loading ? "Création..." : "Créer"}
+            {loading ? t("register.loading") : t("register.submit")}
           </Button>
         </form>
       </div>

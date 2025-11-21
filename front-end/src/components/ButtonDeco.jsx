@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "./Button";
+import { useTranslation } from "react-i18next";
 
 export default function ButtonDeco() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    const ok = window.confirm("Voulez-vous vraiment vous déconnecter ?");
+    const ok = window.confirm(t("logout.confirm"));
     if (!ok) return;
 
     localStorage.removeItem("access_token");
@@ -21,7 +23,7 @@ export default function ButtonDeco() {
       onClick={handleLogout}
       className="rounded px-4 py-2 hover transition bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
     >
-      Déconnexion
+      {t("logout.button")}
     </Button>
   );
 }
