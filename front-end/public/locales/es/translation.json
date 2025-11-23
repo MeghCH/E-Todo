@@ -159,5 +159,21 @@
   "weather": {
     "loading": "Cargando...",
     "city": "Estrasburgo"
+  },
+
+  "themeToggle": {
+    "title": "Cambiar el tema"
+  },
+
+  "home": {
+    "title": "Inicio"
+  },
+
+  "registerButton": {
+    "title": "Crear un empleado"
+  },
+
+  "buttonUserInfo": {
+    "title": "Mis datos"
   }
 }

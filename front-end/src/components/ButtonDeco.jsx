@@ -21,7 +21,7 @@ export default function ButtonDeco() {
   return (
     <Button
       onClick={handleLogout}
-      className="rounded px-4 py-2 hover transition bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
+      className="rounded-lg px-4 py-2 hover transition bg-red-200 dark:bg-red-600 text-red-600 dark:text-red-200"
     >
       {t("logout.button")}
     </Button>

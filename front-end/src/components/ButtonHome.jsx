@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "./Button";
 import { RiHome3Line } from "@remixicon/react";
+import { useTranslation } from "react-i18next";
 
 export default function ButtonHome() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   let user = null;
@@ -24,11 +26,12 @@ export default function ButtonHome() {
   };
 
   return (
-    <Button
+    <button
       onClick={goHome}
-      className="px-3 bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white cursor-pointer"
+      className="size-12 hover:opacity-80 flex justify-center items-center rounded-lg bg-neutral-300 dark:bg-neutral-800 text-neutral-900 dark:text-white cursor-pointer"
+      title={t("home.title")}
     >
       <RiHome3Line size={24} />
-    </Button>
+    </button>
   );
 }

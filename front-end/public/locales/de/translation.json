@@ -160,5 +160,21 @@
   "weather": {
     "loading": "Wird geladen...",
     "city": "Straßburg"
+  },
+
+  "themeToggle": {
+    "title": "Thema umschalten"
+  },
+
+  "home": {
+    "title": "Startseite"
+  },
+
+  "registerButton": {
+    "title": "Mitarbeiter erstellen"
+  },
+
+  "buttonUserInfo": {
+    "title": "Meine Informationen"
   }
 }
