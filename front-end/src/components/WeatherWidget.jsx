@@ -40,7 +40,7 @@ export default function WeatherWidget() {
   const weatherIcon = getWeatherIcon(desc);
 
   return (
-    <div className="bg-neutral-200 dark:bg-neutral-900 rounded-md h-12 flex gap-2 px-4 text-base">
+    <div className="bg-neutral-200 dark:bg-neutral-900 rounded-lg h-12 flex gap-2 px-4 text-base">
       {loading ? (
         <div>{t("weather.loading")}</div>
       ) : (

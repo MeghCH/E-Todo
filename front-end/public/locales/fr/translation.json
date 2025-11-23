@@ -160,5 +160,21 @@
   "weather": {
     "loading": "Chargement...",
     "city": "Strasbourg"
+  },
+
+  "themeToggle": {
+    "title": "Basculer le thème"
+  },
+
+  "home": {
+    "title": "Accueil"
+  },
+
+  "registerButton": {
+    "title": "Créer un employé"
+  },
+
+  "buttonUserInfo": {
+    "title": "Mes informations"
   }
 }

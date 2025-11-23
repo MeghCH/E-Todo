@@ -75,7 +75,7 @@ export default function ColorSwitch({ className }) {
   return (
     <div
       className={twMerge(
-        "bg-neutral-200 dark:bg-neutral-800 rounded-md flex px-3 gap-3 items-center justify-center",
+        "bg-neutral-300 dark:bg-neutral-800 rounded-lg flex px-3 gap-3 items-center justify-center",
         className
       )}
     >

@@ -23,7 +23,7 @@ export default function ButtonDaltonien() {
   return (
     <button
       onClick={() => handleChange(!isActive)}
-      className="size-12 hover:opacity-80 flex justify-center items-center rounded-lg bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white cursor-pointer"
+      className="size-12 hover:opacity-80 flex justify-center items-center rounded-lg bg-neutral-300 dark:bg-neutral-800 text-neutral-900 dark:text-white cursor-pointer"
       title={t("daltonien.title")}
       aria-pressed={isActive}
       aria-label={isActive ? t("daltonien.disable") : t("daltonien.enable")}

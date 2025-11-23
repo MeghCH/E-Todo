@@ -160,5 +160,21 @@
   "weather": {
     "loading": "Loading...",
     "city": "Strasbourg"
+  },
+
+  "themeToggle": {
+    "title": "Switch theme"
+  },
+
+  "home": {
+    "title": "Home"
+  },
+
+  "registerButton": {
+    "title": "Create an employee"
+  },
+
+  "buttonUserInfo": {
+    "title": "My information"
   }
 }
