@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getCurrentUser } from "./api/users";
 import ButtonDaltonien from "./components/ButtonDaltonien";
 import LanguageSwitcher from "./components/LanguageSwitcher";
+import { TimerProvider } from "./context/TimerContext";
 
 function Layout() {
   const location = useLocation();
@@ -91,7 +92,7 @@ function Layout() {
         </div>
       </div>
 
-      <div className="pt-14 size-full">
+      <div className="pt-16 lg:pt-14 size-full">
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
 
@@ -140,5 +141,9 @@ function Layout() {
 }
 
 export default function App() {
-  return <Layout />;
+  return (
+    <TimerProvider>
+      <Layout />
+    </TimerProvider>
+  );
 }

@@ -11,16 +11,16 @@ import { listTodos, createTodo, deleteTodo, updateTodo } from "../api/todos";
 const STATUSES = ["not_started", "todo", "in_progress", "done"];
 
 const STATUS_TO_DB = {
-  not_started: "not started",
+  not_started: "not_started",
   todo: "todo",
-  in_progress: "in progress",
+  in_progress: "in_progress",
   done: "done",
 };
 
 const STATUS_FROM_DB = {
-  "not started": "not_started",
+  not_started: "not_started",
   todo: "todo",
-  "in progress": "in_progress",
+  in_progress: "in_progress",
   done: "done",
 };
 
@@ -86,7 +86,7 @@ export default function TodoList() {
         description: description.trim(),
         created_at: createdAt,
         due_time: dueTime || null,
-        status: STATUS_TO_DB[status] ?? "not started",
+        status: STATUS_TO_DB[status] ?? "not_started",
       };
 
       const newTodoFromApi = await createTodo(payload);

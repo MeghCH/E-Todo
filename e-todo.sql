@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS todo (
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     due_time DATETIME,
-    status VARCHAR(50) DEFAULT 'not started',
+    status VARCHAR(50) DEFAULT 'not_started',
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );

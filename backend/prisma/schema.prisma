@@ -50,8 +50,8 @@ enum user_role {
 }
 
 enum todo_status {
-  not_started @map("not started")
+  not_started 
   todo
-  in_progress @map("in progress")
+  in_progress 
   done
 }
