@@ -4,17 +4,23 @@ import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { fr, enUS, de, es } from "date-fns/locale";
 
+function formatDuration(ms) {
+  const totalSeconds = Math.floor((ms || 0) / 1000);
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(
+    s
+  ).padStart(2, "0")}`;
+}
+
 export default function TimeHistoryMana() {
   const { t, i18n } = useTranslation();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const localeMap = {
-    fr,
-    en: enUS,
-    de,
-    es,
-  };
+  const localeMap = { fr, en: enUS, de, es };
 
   useEffect(() => {
     (async () => {
@@ -72,7 +78,7 @@ export default function TimeHistoryMana() {
             <p className="font-semibold">
               {t("timeHistoryMana.duration")} :{" "}
               {typeof s.durationMs === "number"
-                ? (s.durationMs / 60000).toFixed(1) + " min"
+                ? formatDuration(s.durationMs)
                 : t("timeHistoryMana.none")}
             </p>
 

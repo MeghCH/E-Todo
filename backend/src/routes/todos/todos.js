@@ -18,8 +18,8 @@ function normalizeStatus(status) {
   if (allowed.includes(raw)) return raw;
 
   const mapHuman = {
-    "not started": "not_started",
-    "in progress": "in_progress",
+    not_started: "not_started",
+    in_progress: "in_progress",
     todo: "todo",
     done: "done",
   };
