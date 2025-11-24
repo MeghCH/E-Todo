@@ -33,3 +33,13 @@ CREATE TABLE IF NOT EXISTS timer_sessions (
 CREATE USER IF NOT EXISTS 'meghan'@'%' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON etodo.* TO 'meghan'@'%';
 FLUSH PRIVILEGES;
+
+INSERT INTO user (email, password, name, firstname, role)
+VALUES (
+  'meghan@test.com',
+  '$2b$10$z3yqkX7SfTw95B9lnEPj1O.qQ/akx3BdNxGdqo.q2qpiryOvtyBfO',
+  'Cresci-Humann',
+  'Meghan',
+  'manager'
+)
+ON DUPLICATE KEY UPDATE email = email;

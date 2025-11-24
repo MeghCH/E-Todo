@@ -72,7 +72,6 @@ router.post("/start", authenticateToken, async (req, res) => {
   }
 });
 
-// POST /timer/stop  → stoppe la dernière session en cours
 router.post("/stop", authenticateToken, async (req, res) => {
   try {
     const session = await prisma.timer_sessions.findFirst({
