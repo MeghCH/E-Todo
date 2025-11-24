@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   backend:
@@ -7,13 +7,15 @@ services:
       - "4000:4000"
     environment:
       - PORT=4000
-      - DATABASE_URL=mysql://root:password@db:3306/etodo
+      - SECRET=your_secret_key
+      - DATABASE_URL=mysql://meghan:password@db:3306/etodo
       - DB_HOST=db
-      - DB_USER=root
+      - DB_USER=meghan
       - DB_PASSWORD=password
       - DB_NAME=etodo
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -22,7 +24,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=http://localhost:4000
+      - VITE_API_BASE_URL=http://localhost:4000
     depends_on:
       - backend
     networks:
@@ -31,7 +33,7 @@ services:
   db:
     image: mysql:8.0
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=etodo
