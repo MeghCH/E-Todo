@@ -3,14 +3,6 @@ import { startTimer, stopTimer, getTimeHistory } from "../api/timer";
 
 const TimerContext = createContext();
 
-function loadSessions() {
-  try {
-    return JSON.parse(localStorage.getItem("tt_sessions")) || [];
-  } catch {
-    return [];
-  }
-}
-
 function saveSessions(sessions) {
   localStorage.setItem("tt_sessions", JSON.stringify(sessions));
   window.dispatchEvent(new Event("tt:sessions-updated"));
