@@ -18,6 +18,7 @@ import { getCurrentUser } from "./api/users";
 import ButtonDaltonien from "./components/ButtonDaltonien";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import { TimerProvider } from "./context/TimerContext";
+import { AuthProvider } from "./context/AuthContext";
 
 function Layout() {
   const location = useLocation();
@@ -142,8 +143,10 @@ function Layout() {
 
 export default function App() {
   return (
-    <TimerProvider>
-      <Layout />
-    </TimerProvider>
+    <AuthProvider>
+      <TimerProvider>
+        <Layout />
+      </TimerProvider>
+    </AuthProvider>
   );
 }

@@ -98,8 +98,8 @@ router.put("/:id", authenticateToken, async (req, res) => {
 router.delete("/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
-  if (Number(id) !== req.user.id) {
-    return res.status(403).json({ msg: "Not found" });
+  if (Number(id) !== Number(req.user?.id)) {
+    return res.status(403).json({ msg: "Forbidden" });
   }
 
   try {

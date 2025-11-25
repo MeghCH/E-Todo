@@ -1,25 +1,35 @@
 import { deleteUser } from "../api/users";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./Button";
 import { RiDeleteBinFill } from "@remixicon/react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../context/AuthContext";
 
 function ButtonDeleteUser() {
   const { t } = useTranslation();
-  const { id } = useParams();
   const navigate = useNavigate();
+  const { currentUser, logout } = useAuth();
 
   const onDelete = async () => {
+    if (!currentUser?.id) {
+      alert(t("deleteUser.error"));
+      return;
+    }
+
     const ok = window.confirm(t("deleteUser.confirm"));
     if (!ok) return;
+
     try {
-      await deleteUser(id);
-      navigate("/");
+      await deleteUser(currentUser.id);
+      logout();
+      navigate("/login");
     } catch (e) {
       console.error(e);
       alert(t("deleteUser.error"));
     }
   };
+
+  if (!currentUser) return null;
 
   return (
     <Button
