@@ -1,5 +1,5 @@
-const notFound = (req, res, next) => {
-  res.status(404).json({ msg: 'Notfound' });
+const notFound = (_req, res, _next) => {
+  res.status(404).json({ msg: "Notfound" });
 };
 
 module.exports = notFound;
