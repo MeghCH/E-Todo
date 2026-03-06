@@ -7,12 +7,12 @@ services:
       - "4000:4000"
     environment:
       - PORT=4000
-      - SECRET=your_secret_key
-      - DATABASE_URL=mysql://meghan:password@db:3306/etodo
+      - SECRET=${SECRET}
+      - DATABASE_URL=mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
       - DB_HOST=db
-      - DB_USER=meghan
-      - DB_PASSWORD=password
-      - DB_NAME=etodo
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     depends_on:
       db:
         condition: service_healthy
@@ -35,8 +35,8 @@ services:
     ports:
       - "3307:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=etodo
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
     volumes:
       - db_data:/var/lib/mysql
       - ./e-todo.sql:/docker-entrypoint-initdb.d/e-todo.sql
